@@ -1,0 +1,6 @@
+aws_region     = "us-east-1"
+project_name   = "nptel-qa-iot-2026"
+api_secret_key = "<your-secret-key>"
+
+bedrock_llm_model_id        = "openai.gpt-oss-20b-1:0"
+bedrock_embedding_model_arn = "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0"

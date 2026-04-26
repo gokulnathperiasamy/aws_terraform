@@ -1,0 +1,34 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - |
+        TERRAFORM_VERSION="1.7.5"
+        curl -sSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -o terraform.zip
+        unzip -q terraform.zip
+        mv terraform /usr/local/bin/terraform
+        terraform version
+
+  pre_build:
+    commands:
+      # Fetch terraform.tfvars content from SSM Parameter Store and write to file
+      - aws ssm get-parameter --name "$TF_VAR_FILE_PARAM" --with-decryption --query "Parameter.Value" --output text > terraform.tfvars
+      - echo "tfvars fetched from SSM"
+
+  build:
+    commands:
+      - terraform init -input=false
+      - terraform validate
+      - terraform plan -input=false -out=tfplan
+      - terraform apply -input=false -auto-approve tfplan
+
+  post_build:
+    commands:
+      - echo "Terraform apply completed at $(date)"
+      - terraform output
+
+artifacts:
+  files:
+    - tfplan
+  discard-paths: yes

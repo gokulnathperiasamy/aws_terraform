@@ -1,0 +1,15 @@
+# Terraform state and local files
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+tfplan
+
+# Never commit actual tfvars — stored in SSM Parameter Store
+terraform.tfvars
+
+# Lambda zip artifacts
+*.zip
+
+# macOS
+.DS_Store
