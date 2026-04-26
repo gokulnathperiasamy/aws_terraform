@@ -37,7 +37,10 @@ resource "aws_s3_object" "pdfs" {
   key          = "documents/${each.value}"
   source       = "${path.root}/source_data/${each.value}"
   content_type = "application/pdf"
-  etag         = filemd5("${path.root}/source_data/${each.value}")
+
+  lifecycle {
+    ignore_changes = [etag]
+  }
 }
 
 # Notification to trigger ingestion Lambda on new PDF uploads

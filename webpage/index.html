@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NPTEL IoT Chatbot</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #1a1a1a;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+    }
+
+    .header p {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #888;
+    }
+
+    /* Input */
+    textarea {
+      width: 100%;
+      background-color: #2e2e2e;
+      color: #e0e0e0;
+      border: 1px solid #3a3a3a;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 15px;
+      resize: vertical;
+      min-height: 100px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+
+    textarea::placeholder {
+      color: #666;
+    }
+
+    textarea:focus {
+      border-color: #666;
+    }
+
+    /* Buttons */
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    button {
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      font-family: inherit;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background-color: #4a4a4a;
+      color: #000000;
+      border: none;
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: #888;
+      border: 1px solid #555;
+    }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid #2e2e2e;
+    }
+
+    /* Result */
+    .result {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .result.visible {
+      display: flex;
+    }
+
+    .answer-box {
+      background-color: #222;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .answer-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .answer-text {
+      font-size: 16px;
+      line-height: 1.7;
+      color: #ffffff;
+    }
+
+    .reasoning-text {
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #777;
+      font-style: italic;
+    }
+
+    /* References */
+    .references-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .references-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+    }
+
+    .reference-card {
+      background-color: #222;
+      border: 1px solid #2e2e2e;
+      border-radius: 10px;
+      padding: 14px 18px;
+    }
+
+    .reference-source {
+      font-size: 13px;
+      font-weight: 600;
+      color: #bbb;
+      margin-bottom: 4px;
+    }
+
+    .reference-excerpt {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #555;
+      border-top-color: #aaa;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: auto;
+    }
+
+    .spinner.visible {
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .btn-primary-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>NPTEL IoT Chatbot</h1>
+      <p>Ask questions from 12 weeks of IoT lecture materials</p>
+    </div>
+
+    <!-- Input -->
+    <textarea id="question" placeholder="Ask a question from the lecture materials..."></textarea>
+
+    <!-- Buttons -->
+    <div class="actions">
+      <button class="btn-secondary" onclick="reset()">Reset</button>
+      <button class="btn-primary" id="findBtn" onclick="findAnswer()">
+        <span class="btn-primary-inner">
+          <span id="btnText">Find Answer</span>
+          <span class="spinner" id="spinner"></span>
+        </span>
+      </button>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Result -->
+    <div class="result" id="result">
+
+      <!-- Answer + Reasoning -->
+      <div class="answer-box">
+        <div class="answer-label">Answer</div>
+        <div class="answer-text" id="answerText"></div>
+        <div class="reasoning-text" id="reasoningText"></div>
+      </div>
+
+      <!-- References -->
+      <div class="references-section" id="referencesSection"></div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const API_URL = "https://i3arb3ey53.execute-api.us-east-1.amazonaws.com/v1/chat";
+    const API_KEY = "NPTEL-2026-IOT-BLR";
+
+    async function findAnswer() {
+      const question = document.getElementById("question").value.trim();
+      if (!question) return;
+
+      setLoading(true);
+      hideResult();
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": API_KEY,
+          },
+          body: JSON.stringify({ question }),
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          showError(data.error);
+          return;
+        }
+
+        renderResult(data);
+
+      } catch (err) {
+        showError("Failed to reach the API. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function renderResult(data) {
+      document.getElementById("answerText").textContent = data.answer || "";
+
+      const reasoningEl = document.getElementById("reasoningText");
+      if (data.reasoning) {
+        reasoningEl.textContent = data.reasoning;
+        reasoningEl.style.display = "block";
+      } else {
+        reasoningEl.style.display = "none";
+      }
+
+      const refsSection = document.getElementById("referencesSection");
+      refsSection.innerHTML = "";
+
+      if (data.references && data.references.length > 0) {
+        const label = document.createElement("div");
+        label.className = "references-label";
+        label.textContent = "References";
+        refsSection.appendChild(label);
+
+        data.references.forEach(ref => {
+          const card = document.createElement("div");
+          card.className = "reference-card";
+          card.innerHTML = `
+            <div class="reference-source">$${ref.source}</div>
+            <div class="reference-excerpt">$${ref.excerpt}</div>
+          `;
+          refsSection.appendChild(card);
+        });
+      }
+
+      document.getElementById("result").classList.add("visible");
+    }
+
+    function showError(msg) {
+      document.getElementById("answerText").textContent = msg;
+      document.getElementById("reasoningText").style.display = "none";
+      document.getElementById("referencesSection").innerHTML = "";
+      document.getElementById("result").classList.add("visible");
+    }
+
+    function hideResult() {
+      document.getElementById("result").classList.remove("visible");
+    }
+
+    function reset() {
+      document.getElementById("question").value = "";
+      hideResult();
+      document.getElementById("answerText").textContent = "";
+      document.getElementById("reasoningText").textContent = "";
+      document.getElementById("referencesSection").innerHTML = "";
+    }
+
+    function setLoading(loading) {
+      const btn = document.getElementById("findBtn");
+      const spinner = document.getElementById("spinner");
+      const btnText = document.getElementById("btnText");
+      btn.disabled = loading;
+      spinner.className = loading ? "spinner visible" : "spinner";
+      btnText.textContent = loading ? "Searching..." : "Find Answer";
+    }
+
+    // Allow Enter key (Ctrl+Enter) to submit
+    document.getElementById("question").addEventListener("keydown", e => {
+      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) findAnswer();
+    });
+  </script>
+</body>
+
+</html>

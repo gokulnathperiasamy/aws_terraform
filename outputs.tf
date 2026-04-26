@@ -1,3 +1,8 @@
+output "website_url" {
+  description = "CloudFront URL for the chatbot webpage"
+  value       = module.nptel_chatbot.website_url
+}
+
 output "api_gateway_invoke_url" {
   description = "API Gateway invoke URL for chat"
   value       = module.nptel_chatbot.api_gateway_invoke_url

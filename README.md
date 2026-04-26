@@ -7,13 +7,14 @@ A Q&A chatbot over 12 weeks of lecture PDFs using a two-step RAG pipeline powere
 ## Architecture
 
 ```
-User
+Browser (CloudFront → S3 static webpage)
  │
- ▼
-API Gateway
  │  POST /chat     → ask a question
  │  GET  /ingest   → trigger PDF ingestion
  │  header: x-api-key
+ ▼
+API Gateway
+ │
  ▼
 Lambda Authorizer
  │  validates key against Secrets Manager
@@ -31,7 +32,7 @@ OpenSearch Serverless (vector search)              │
  └──────────── context injected into prompt ───────┘
                                                    │
                                                    ▼
-                                          Answer + References
+                                 Answer + Reasoning + References
 ```
 
 All Lambda functions run inside a private VPC with VPC endpoints — no internet gateway required.
@@ -70,7 +71,7 @@ User question
  └─ Step 2: GENERATE
       └── Retrieved chunks injected into prompt as context
            └── openai.gpt-oss-20b-1:0 (via Bedrock InvokeModel)
-                └── Generates grounded answer with source citations (Week X)
+                └── Generates answer + reasoning + source citations (Week X)
 ```
 
 ---
@@ -88,10 +89,11 @@ User question
 | Ingest API | Lambda (ingest) | Manually trigger KB sync via GET /ingest |
 | Query Handler | Lambda (query) | Runs two-step RAG: Retrieve → Generate |
 | Auth | Lambda (authorizer) | Validates x-api-key header via Secrets Manager |
-| API | API Gateway | REST endpoint with header-based auth |
+| API | API Gateway | REST endpoint with CORS + header-based auth |
 | Secret Storage | Secrets Manager | Stores API secret key |
 | Networking | VPC + Private Subnets | Isolates all Lambdas from public internet |
 | VPC Endpoints | Interface + Gateway | Private access to S3, Bedrock, Secrets Manager |
+| Static Website | S3 + CloudFront | Hosts the chatbot webpage over HTTPS |
 
 ---
 
@@ -103,20 +105,25 @@ AWS_Terraform/                   ← root (run terraform apply here)
 ├── variables.tf                 # Root input variables
 ├── outputs.tf                   # Proxies module outputs
 ├── terraform.tfvars             # Variable values (never commit this)
+├── terraform.tfvars.example     # Reference template for terraform.tfvars
 ├── lambda/                      # Lambda source code
-│   ├── query/handler.py         # Two-step RAG: Retrieve + InvokeModel
+│   ├── query/handler.py         # Two-step RAG: Retrieve + InvokeModel + reasoning extraction
 │   ├── authorizer/handler.py    # Validates x-api-key against Secrets Manager
 │   ├── ingestion/handler.py     # Triggers Bedrock KB sync on S3 upload
 │   └── ingest/handler.py        # Manually triggers Bedrock KB sync via API
 ├── scripts/
 │   └── create_aoss_index.py     # Creates OpenSearch vector index before KB creation
 ├── source_data/                 # Raw lecture PDFs (Week 1–12)
+├── webpage/
+│   └── index.html               # Chatbot UI — matte black theme, served via CloudFront
 └── infra/                       # Terraform module (nptel_chatbot)
     ├── main.tf                  # Provider config, random suffix
     ├── variables.tf             # Module input variables
     ├── outputs.tf               # Module outputs
     ├── vpc.tf                   # VPC, private subnets, security groups, VPC endpoints
     ├── s3.tf                    # S3 bucket, PDF uploads, S3 event notification
+    ├── s3_website.tf            # S3 bucket for static website + index.html upload
+    ├── cloudfront.tf            # CloudFront distribution with OAC
     ├── iam.tf                   # IAM roles and least-privilege policies
     ├── iam_cicd.tf              # IAM roles for CodeBuild, CodePipeline, EventBridge
     ├── opensearch.tf            # AOSS collection, security/access policies
@@ -127,7 +134,7 @@ AWS_Terraform/                   ← root (run terraform apply here)
     ├── lambda_authorizer.tf     # Authorizer Lambda packaging and deployment
     ├── lambda_ingestion.tf      # Ingestion Lambda packaging and S3 trigger
     ├── lambda_ingest.tf         # Ingest Lambda packaging and API trigger
-    ├── api_gateway.tf           # REST API, REQUEST authorizer, routes, stage
+    ├── api_gateway.tf           # REST API, REQUEST authorizer, CORS, routes, stage
     ├── codecommit.tf            # CodeCommit repository
     ├── codepipeline.tf          # CodePipeline, CodeBuild, EventBridge rule
     └── buildspec.yml            # CodeBuild instructions
@@ -224,8 +231,42 @@ Terraform will:
 5. Store API secret key in Secrets Manager
 6. Store terraform.tfvars in SSM Parameter Store
 7. Deploy 4 Lambda functions (query, authorizer, ingestion, ingest) inside the VPC
-8. Create API Gateway REST API with `POST /chat` and `GET /ingest` routes
-9. Create CodeCommit repo, CodePipeline, and EventBridge tag trigger
+8. Create API Gateway REST API with `POST /chat` and `GET /ingest` routes + CORS
+9. Create S3 website bucket + CloudFront distribution for the chatbot webpage
+10. Create CodeCommit repo, CodePipeline, and EventBridge tag trigger
+
+---
+
+## Set Up the Webpage
+
+After `terraform apply`, update the API URL in `webpage/index.html`:
+
+```js
+const API_URL = "https://i3arb3ey53.execute-api.us-east-1.amazonaws.com/v1/chat";
+const API_KEY = "NPTEL-2026-IOT-BLR";
+```
+
+Then re-apply to push the updated file to S3:
+
+```bash
+terraform apply
+```
+
+Open the chatbot at the `website_url` from terraform output:
+```
+https://djx27qfo8femv.cloudfront.net
+```
+
+### Webpage Features
+
+- Matte black theme (`#1a1a1a` background)
+- Textarea input with 12px rounded corners
+- `Find Answer` — primary button (grey background, black text)
+- `Reset` — secondary button (grey border, grey text) — clears the entire page
+- Answer displayed in a focused card with white text
+- Reasoning shown as italic muted grey subtext below the answer
+- References rendered as cards at the bottom with source name + excerpt
+- `Ctrl+Enter` keyboard shortcut to submit
 
 ---
 
@@ -266,6 +307,7 @@ curl -X POST <api_gateway_invoke_url from terraform output> \
 ```json
 {
   "answer": "Week 3 covers database normalization including 1NF, 2NF, and 3NF as discussed in the Week 3 Lecture Material...",
+  "reasoning": "The context from Week 3 Course Material clearly describes normalization concepts...",
   "references": [
     {
       "source": "Week 3 Course Material",
@@ -403,4 +445,4 @@ Both are excluded from git via `.gitignore` — they contain sensitive resource 
 terraform destroy
 ```
 
-> Note: S3 bucket has `force_destroy = true` and Secrets Manager secret has `recovery_window_in_days = 0` so all resources are cleanly removed.
+> Note: S3 buckets have `force_destroy = true` and Secrets Manager secret has `recovery_window_in_days = 0` so all resources are cleanly removed.

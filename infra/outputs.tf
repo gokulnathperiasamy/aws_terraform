@@ -1,3 +1,8 @@
+output "website_url" {
+  description = "CloudFront URL for the chatbot webpage"
+  value       = "https://${aws_cloudfront_distribution.website.domain_name}"
+}
+
 output "api_gateway_invoke_url" {
   description = "API Gateway invoke URL for chat"
   value       = "${aws_api_gateway_stage.main.invoke_url}/chat"

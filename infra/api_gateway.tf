@@ -77,6 +77,52 @@ resource "aws_api_gateway_integration" "chat_post" {
   uri                     = aws_lambda_function.query.invoke_arn
 }
 
+# OPTIONS /chat (CORS preflight)
+resource "aws_api_gateway_method" "chat_options" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.chat.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "chat_options" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.chat.id
+  http_method = aws_api_gateway_method.chat_options.http_method
+  type        = "MOCK"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_method_response" "chat_options" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.chat.id
+  http_method = aws_api_gateway_method.chat_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "chat_options" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.chat.id
+  http_method = aws_api_gateway_method.chat_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,x-api-key'"
+    "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+
+  depends_on = [aws_api_gateway_integration.chat_options]
+}
+
 resource "aws_lambda_permission" "apigw_invoke_query" {
   statement_id  = "AllowAPIGatewayInvokeQuery"
   action        = "lambda:InvokeFunction"
@@ -122,6 +168,8 @@ resource "aws_api_gateway_deployment" "main" {
       aws_api_gateway_resource.chat.id,
       aws_api_gateway_method.chat_post.id,
       aws_api_gateway_integration.chat_post.id,
+      aws_api_gateway_method.chat_options.id,
+      aws_api_gateway_integration.chat_options.id,
       aws_api_gateway_resource.ingest.id,
       aws_api_gateway_method.ingest_get.id,
       aws_api_gateway_integration.ingest_get.id,
