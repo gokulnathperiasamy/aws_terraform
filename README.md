@@ -55,25 +55,25 @@ Browser (CloudFront → S3 static webpage)
 API Gateway
  │
  ▼
-Lambda Authorizer
+Lambda Authorizer  (public — calls Secrets Manager directly)
  │  validates key against Secrets Manager
  ▼
-Query Lambda  ──────────────────────────────────────────────────────┐
- │                                                                  │
- │  Step 1: RETRIEVE                          Step 2: GENERATE      │
- │                                                                  │
- ▼                                                                  ▼
+Query Lambda  (public — calls Bedrock directly) ──────────────────────┐
+ │                                                                    │
+ │  Step 1: RETRIEVE                          Step 2: GENERATE        │
+ │                                                                    │
+ ▼                                                                    ▼
 Bedrock KB Retrieve API                                   Bedrock InvokeModel
  │  embeds question via Titan Embed v2                   openai.gpt-oss-20b-1:0
- ▼                                                                  │
-Aurora PostgreSQL + pgvector                                        │
- │  HNSW cosine similarity search                                   │
- │  returns top 5 matching chunks                                   │
- └──────────── context injected into prompt ────────────────────────┘
-                                                                    │
-                                                                    ▼
-                                                                GPT Answer 
-                                                       (Reasoning & References)
+ ▼                                                                    │
+Aurora PostgreSQL + pgvector  (private VPC)                           │
+ │  HNSW cosine similarity search                                     │
+ │  returns top 5 matching chunks                                     │
+ └──────────── context injected into prompt ──────────────────────────┘
+                                                                      │
+                                                                      ▼
+                                                                 GPT Answer
+                                                           (Reasoning & References)
 ```
 
 ---
@@ -129,6 +129,7 @@ User question
 | Auth | Lambda (authorizer) | Validates x-api-key header via Secrets Manager |
 | API | API Gateway | REST endpoint with CORS + header-based auth |
 | Secret Storage | Secrets Manager | Stores API key + Aurora DB credentials |
+| Networking | VPC + Private Subnets | Isolates Aurora and pgvector_setup Lambda from public internet |
 | Static Website | S3 + CloudFront | Hosts the chatbot webpage over HTTPS |
 
 ---
@@ -159,7 +160,7 @@ AWS_Terraform/                   ← root (run terraform apply here)
     ├── main.tf                  # Provider config, random suffix
     ├── variables.tf             # Module input variables
     ├── outputs.tf               # Module outputs
-    ├── vpc.tf                   # VPC, private subnets, security groups, VPC endpoints
+    ├── vpc.tf                   # VPC, private subnets, security groups (pgvector_setup only)
     ├── s3.tf                    # S3 bucket, PDF uploads, S3 event notification
     ├── s3_website.tf            # S3 bucket for static website + index.html upload
     ├── cloudfront.tf            # CloudFront distribution with OAC
@@ -253,14 +254,14 @@ terraform apply
 ```
 
 Terraform will:
-1. Create VPC with 2 private subnets and VPC endpoints
+1. Create VPC with 2 private subnets (for Aurora + pgvector_setup Lambda only)
 2. Create S3 bucket and upload all 12 PDFs from `source_data/`
 3. Create Aurora Serverless v2 PostgreSQL cluster
 4. Deploy pgvector setup Lambda — creates `bedrock_kb_vectors` table with HNSW + GIN indexes
 5. Create Bedrock Knowledge Base pointing to Aurora via RDS Data API
 6. Store API key + DB credentials in Secrets Manager
 7. Store terraform.tfvars in SSM Parameter Store
-8. Deploy 5 Lambda functions (query, authorizer, ingestion, ingest, pgvector_setup) inside the VPC
+8. Deploy 5 Lambda functions — query, authorizer, ingestion, ingest run public; pgvector_setup runs in VPC
 9. Create API Gateway REST API with `POST /chat` and `GET /ingest` routes + CORS
 10. Create S3 website bucket + CloudFront distribution for the chatbot webpage
 11. Create CodeCommit repo, CodePipeline, and EventBridge tag trigger
