@@ -28,6 +28,12 @@ variable "bedrock_llm_model_id" {
   default     = "openai.gpt-oss-20b-1:0"
 }
 
+variable "db_password" {
+  description = "RDS PostgreSQL master password"
+  type        = string
+  sensitive   = true
+}
+
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string

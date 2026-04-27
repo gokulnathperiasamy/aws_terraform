@@ -35,11 +35,14 @@ resource "aws_iam_role_policy" "bedrock_kb" {
         Resource = [var.bedrock_embedding_model_arn]
       },
       {
-        Effect = "Allow"
-        Action = [
-          "aoss:APIAccessAll"
-        ]
-        Resource = [aws_opensearchserverless_collection.main.arn]
+        Effect   = "Allow"
+        Action   = ["rds-data:ExecuteStatement", "rds-data:BatchExecuteStatement", "rds:DescribeDBClusters"]
+        Resource = aws_rds_cluster.main.arn
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["secretsmanager:GetSecretValue"]
+        Resource = aws_secretsmanager_secret.db_credentials.arn
       }
     ]
   })

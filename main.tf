@@ -18,6 +18,7 @@ module "nptel_chatbot" {
   aws_region                  = var.aws_region
   project_name                = var.project_name
   api_secret_key              = var.api_secret_key
+  db_password                 = var.db_password
   bedrock_llm_model_id        = var.bedrock_llm_model_id
   bedrock_embedding_model_arn = var.bedrock_embedding_model_arn
   vpc_cidr                    = var.vpc_cidr

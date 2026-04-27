@@ -40,6 +40,14 @@ resource "aws_security_group" "lambda" {
     description = "HTTPS to AWS services via VPC endpoints"
   }
 
+  egress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+    description = "PostgreSQL to RDS"
+  }
+
   tags = { Name = "${var.project_name}-lambda-sg" }
 }
 

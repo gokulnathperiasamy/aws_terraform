@@ -1,6 +1,6 @@
 # NPTEL IoT Chatbot — AWS Bedrock + Terraform
 
-A Q&A chatbot over 12 weeks of lecture PDFs using a two-step RAG pipeline powered by Amazon Bedrock Knowledge Base, OpenSearch Serverless, and OpenAI GPT OSS 20B on Bedrock.
+A Q&A chatbot over 12 weeks of lecture PDFs using a two-step RAG pipeline powered by Amazon Bedrock Knowledge Base, Aurora PostgreSQL (pgvector), and OpenAI GPT OSS 20B on Bedrock.
 
 ---
 
@@ -27,7 +27,8 @@ Query Lambda  ──────────────────────
 Bedrock KB Retrieve API                          Bedrock InvokeModel
  │  embeds question via Titan Embed v2            openai.gpt-oss-20b-1:0
  ▼                                                 │
-OpenSearch Serverless (vector search)              │
+Aurora PostgreSQL + pgvector                       │
+ │  HNSW cosine similarity search                  │
  │  returns top 5 matching chunks                  │
  └──────────── context injected into prompt ───────┘
                                                    │
@@ -49,7 +50,7 @@ RAG (Retrieval-Augmented Generation) is the core of this chatbot. It has two pha
 S3 (raw PDFs)
  └── Bedrock KB Data Source
       └── Titan Embed Text v2  ← chunks PDF text into 512-token segments (20% overlap)
-           └── OpenSearch Serverless  ← stores vectors + raw text chunks
+           └── Aurora PostgreSQL (pgvector)  ← stores vectors + raw text chunks
 ```
 
 - Triggered automatically when a PDF is uploaded to S3
@@ -65,7 +66,7 @@ User question
  ├─ Step 1: RETRIEVE
  │   └── Bedrock KB Retrieve API
  │        └── Titan Embed Text v2 embeds the question into a vector
- │             └── Cosine similarity search in OpenSearch Serverless
+ │             └── HNSW cosine similarity search in Aurora pgvector
  │                  └── Returns top 5 most relevant text chunks + source metadata
  │
  └─ Step 2: GENERATE
@@ -81,17 +82,18 @@ User question
 | Component | AWS Service | Purpose |
 |---|---|---|
 | PDF Storage | S3 | Stores raw lecture PDFs |
-| Vector Store | OpenSearch Serverless | Stores embeddings for semantic search |
+| Vector Store | Aurora PostgreSQL + pgvector | Stores embeddings for semantic search (HNSW index) |
 | Embedding Model | Titan Embed Text v2 | Converts text chunks and queries to vectors |
 | Generation Model | OpenAI GPT OSS 20B (Bedrock) | Generates answers from retrieved context |
 | Knowledge Base | Bedrock Knowledge Base | Manages chunking, embedding, indexing pipeline |
+| pgvector Setup | Lambda (pgvector_setup) | Creates vector table + indexes in Aurora on first deploy |
 | Ingestion Trigger | Lambda (ingestion) | Starts KB sync on S3 PDF upload |
 | Ingest API | Lambda (ingest) | Manually trigger KB sync via GET /ingest |
 | Query Handler | Lambda (query) | Runs two-step RAG: Retrieve → Generate |
 | Auth | Lambda (authorizer) | Validates x-api-key header via Secrets Manager |
 | API | API Gateway | REST endpoint with CORS + header-based auth |
-| Secret Storage | Secrets Manager | Stores API secret key |
-| Networking | VPC + Private Subnets | Isolates all Lambdas from public internet |
+| Secret Storage | Secrets Manager | Stores API key + Aurora DB credentials |
+| Networking | VPC + Private Subnets | Isolates all Lambdas and Aurora from public internet |
 | VPC Endpoints | Interface + Gateway | Private access to S3, Bedrock, Secrets Manager |
 | Static Website | S3 + CloudFront | Hosts the chatbot webpage over HTTPS |
 
@@ -110,9 +112,12 @@ AWS_Terraform/                   ← root (run terraform apply here)
 │   ├── query/handler.py         # Two-step RAG: Retrieve + InvokeModel + reasoning extraction
 │   ├── authorizer/handler.py    # Validates x-api-key against Secrets Manager
 │   ├── ingestion/handler.py     # Triggers Bedrock KB sync on S3 upload
-│   └── ingest/handler.py        # Manually triggers Bedrock KB sync via API
+│   ├── ingest/handler.py        # Manually triggers Bedrock KB sync via API
+│   └── pgvector_setup/
+│       ├── handler.py           # Creates pgvector extension, table, HNSW + GIN indexes
+│       └── layer/               # psycopg2-binary Lambda layer (Linux x86_64)
 ├── scripts/
-│   └── create_aoss_index.py     # Creates OpenSearch vector index before KB creation
+│   └── setup_pgvector.py        # Local pgvector setup script (alternative to Lambda)
 ├── source_data/                 # Raw lecture PDFs (Week 1–12)
 ├── webpage/
 │   └── index.html               # Chatbot UI — matte black theme, served via CloudFront
@@ -126,14 +131,15 @@ AWS_Terraform/                   ← root (run terraform apply here)
     ├── cloudfront.tf            # CloudFront distribution with OAC
     ├── iam.tf                   # IAM roles and least-privilege policies
     ├── iam_cicd.tf              # IAM roles for CodeBuild, CodePipeline, EventBridge
-    ├── opensearch.tf            # AOSS collection, security/access policies
+    ├── rds.tf                   # Aurora Serverless v2 PostgreSQL cluster
     ├── bedrock.tf               # Knowledge Base + S3 data source + chunking config
-    ├── secrets.tf               # Secrets Manager secret for API key
+    ├── secrets.tf               # Secrets Manager for API key + DB credentials
     ├── ssm.tf                   # SSM Parameter Store for terraform.tfvars
     ├── lambda_query.tf          # Query Lambda packaging and deployment
     ├── lambda_authorizer.tf     # Authorizer Lambda packaging and deployment
     ├── lambda_ingestion.tf      # Ingestion Lambda packaging and S3 trigger
     ├── lambda_ingest.tf         # Ingest Lambda packaging and API trigger
+    ├── lambda_pgvector_setup.tf # pgvector setup Lambda + psycopg2 layer + auto-invoke
     ├── api_gateway.tf           # REST API, REQUEST authorizer, CORS, routes, stage
     ├── codecommit.tf            # CodeCommit repository
     ├── codepipeline.tf          # CodePipeline, CodeBuild, EventBridge rule
@@ -181,15 +187,7 @@ Default output format: json
 
 > Get your credentials from: AWS Console → IAM → Users → your user → Security credentials → Create access key
 
-### 4. Install Python Packages
-
-Required locally for the OpenSearch index creation script that runs during `terraform apply`:
-
-```bash
-pip install opensearch-py boto3 requests-aws4auth
-```
-
-### 5. Enable Bedrock Model Access
+### 4. Enable Bedrock Model Access
 
 - Go to: https://console.aws.amazon.com/bedrock/home#/modelaccess
 - Click **Modify model access**
@@ -198,18 +196,19 @@ pip install opensearch-py boto3 requests-aws4auth
   - `openai.gpt-oss-20b-1:0` — used for answer generation
 - Click **Save changes**
 
-### 6. Set Up terraform.tfvars
+### 5. Set Up terraform.tfvars
 
 ```bash
 cp terraform.tfvars.example terraform.tfvars
 ```
 
-Edit `terraform.tfvars` and set `api_secret_key` to a strong secret of your choice — this is the key callers must pass in the `x-api-key` header to use the API:
+Edit `terraform.tfvars`:
 
 ```hcl
 aws_region     = "us-east-1"
 project_name   = "nptel-qa-iot-2026"
 api_secret_key = "your-strong-secret-key"
+db_password    = "your-db-password"
 ```
 
 > `terraform.tfvars` is in `.gitignore` and will never be committed. Use `terraform.tfvars.example` as a reference.
@@ -224,16 +223,18 @@ terraform apply
 ```
 
 Terraform will:
-1. Create VPC with 2 private subnets and 5 VPC endpoints
+1. Create VPC with 2 private subnets and VPC endpoints
 2. Create S3 bucket and upload all 12 PDFs from `source_data/`
-3. Create OpenSearch Serverless vector collection + vector index
-4. Create Bedrock Knowledge Base pointing to S3 with fixed-size chunking
-5. Store API secret key in Secrets Manager
-6. Store terraform.tfvars in SSM Parameter Store
-7. Deploy 4 Lambda functions (query, authorizer, ingestion, ingest) inside the VPC
-8. Create API Gateway REST API with `POST /chat` and `GET /ingest` routes + CORS
-9. Create S3 website bucket + CloudFront distribution for the chatbot webpage
-10. Create CodeCommit repo, CodePipeline, and EventBridge tag trigger
+3. Create Aurora Serverless v2 PostgreSQL cluster
+4. Deploy pgvector setup Lambda — creates `bedrock_kb_vectors` table with HNSW + GIN indexes
+5. Create Bedrock Knowledge Base pointing to Aurora via RDS Data API
+6. Store API key + DB credentials in Secrets Manager
+7. Store terraform.tfvars in SSM Parameter Store
+8. Deploy 5 Lambda functions (query, authorizer, ingestion, ingest, pgvector_setup) inside the VPC
+9. Create API Gateway REST API with `POST /chat` and `GET /ingest` routes + CORS
+10. Create S3 website bucket + CloudFront distribution for the chatbot webpage
+11. Create CodeCommit repo, CodePipeline, and EventBridge tag trigger
+12. Trigger initial ingestion job automatically
 
 ---
 
@@ -254,7 +255,7 @@ terraform apply
 
 Open the chatbot at the `website_url` from terraform output:
 ```
-https://djx27qfo8femv.cloudfront.net
+https://ded2w1e3jg3jd.cloudfront.net
 ```
 
 ### Webpage Features
@@ -272,7 +273,7 @@ https://djx27qfo8femv.cloudfront.net
 
 ## Trigger Ingestion
 
-After `terraform apply`, trigger the initial ingestion to embed and index all PDFs:
+Ingestion is triggered automatically by `terraform apply`. To trigger manually:
 
 ```bash
 curl -X GET <api_gateway_ingest_url from terraform output> \
@@ -289,7 +290,7 @@ curl -X GET <api_gateway_ingest_url from terraform output> \
 ```
 
 Ingestion takes a few minutes. Check status in:
-- AWS Console → Amazon Bedrock → Knowledge Bases → nptel-qa-iot-2026-kb → Sync History
+- AWS Console → Amazon Bedrock → Knowledge Bases → nptel-qa-iot-2026-knowledge-base → Sync History
 
 ---
 
@@ -413,7 +414,8 @@ aws ssm put-parameter \
   --overwrite \
   --value 'aws_region = "us-east-1"
 project_name = "nptel-qa-iot-2026"
-api_secret_key = "your-new-secret-key"'
+api_secret_key = "your-new-secret-key"
+db_password = "your-db-password"'
 ```
 
 Then push a new tag to trigger the pipeline.
@@ -425,6 +427,23 @@ Then push a new tag to trigger the pipeline.
 | `codebuild-role` | CodeBuild | SSM read, S3 artifacts, full Terraform provisioning |
 | `codepipeline-role` | CodePipeline | S3 artifacts, CodeCommit source, CodeBuild trigger |
 | `eventbridge-pipeline-role` | EventBridge | `codepipeline:StartPipelineExecution` only |
+
+---
+
+## Cost Estimate
+
+| Service | Cost/month |
+|---|---|
+| Aurora Serverless v2 (0.5 ACU min) | ~$43/month |
+| VPC Interface Endpoints (3) | ~$22/month |
+| S3 (3 buckets, ~500MB) | ~$0.15/month |
+| CloudFront | ~$0.01/month |
+| Lambda (4 functions, low traffic) | ~$0.00/month |
+| API Gateway | ~$0.00/month |
+| Secrets Manager | ~$0.80/month |
+| **Total** | **~$66/month** |
+
+> Aurora Serverless v2 scales to near zero when idle. For dev/demo use, stop the cluster when not in use to minimize costs.
 
 ---
 
@@ -445,4 +464,4 @@ Both are excluded from git via `.gitignore` — they contain sensitive resource 
 terraform destroy
 ```
 
-> Note: S3 buckets have `force_destroy = true` and Secrets Manager secret has `recovery_window_in_days = 0` so all resources are cleanly removed.
+> Note: S3 buckets have `force_destroy = true` and Secrets Manager secrets have `recovery_window_in_days = 0` so all resources are cleanly removed.
