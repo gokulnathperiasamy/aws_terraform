@@ -4,6 +4,48 @@ A Q&A chatbot over 12 weeks of lecture PDFs using a two-step RAG pipeline powere
 
 ---
 
+## TL;DR — Quick Start
+
+> Full setup in 6 steps. Takes ~15 minutes.
+
+**1. Install tools**
+```bash
+brew install awscli hashicorp/tap/terraform
+aws configure   # enter your AWS access key, secret, region: us-east-1
+```
+
+
+**2. Set variables**
+```bash
+cp terraform.tfvars.example terraform.tfvars
+# Edit terraform.tfvars — set api_secret_key and db_password
+```
+
+**3. Deploy**
+```bash
+terraform init
+terraform apply
+```
+
+**3. Update API URL in webpage**
+```js
+// webpage/index.html
+const API_URL = "<api_gateway_invoke_url from terraform output>";
+```
+```bash
+terraform apply   # re-apply to push updated index.html to S3
+// If fails to update, delete the instance from Cloud Front and apply again
+```
+
+**5. Open the chatbot**
+```
+https://<website_url from terraform output>
+```
+
+> Ingestion runs automatically. Ask questions immediately after deploy.
+
+---
+
 ## Architecture
 
 ```
@@ -24,16 +66,17 @@ Query Lambda  ──────────────────────
  │  Step 1: RETRIEVE                          Step 2: GENERATE      │
  │                                                                  │
  ▼                                                                  ▼
-Bedrock KB Retrieve API                          Bedrock InvokeModel
- │  embeds question via Titan Embed v2            openai.gpt-oss-20b-1:0
- ▼                                                        │
-Aurora PostgreSQL + pgvector                              │
- │  HNSW cosine similarity search                         │
- │  returns top 5 matching chunks                         │
- └──────────── context injected into prompt ──────────────┘
-                                                          │
-                                                          ▼
-                                            Answer + Reasoning + References
+Bedrock KB Retrieve API                                   Bedrock InvokeModel
+ │  embeds question via Titan Embed v2                   openai.gpt-oss-20b-1:0
+ ▼                                                                  │
+Aurora PostgreSQL + pgvector                                        │
+ │  HNSW cosine similarity search                                   │
+ │  returns top 5 matching chunks                                   │
+ └──────────── context injected into prompt ────────────────────────┘
+                                                                    │
+                                                                    ▼
+                                                                GPT Answer 
+                                                       (Reasoning & References)
 ```
 
 All Lambda functions run inside a private VPC with VPC endpoints — no internet gateway required.
