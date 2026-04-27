@@ -453,7 +453,7 @@ Then push a new tag to trigger the pipeline.
 
 | Service | Original Setup | Current Setup | Saving |
 |---|---|---|---|
-| Vector Store | OpenSearch Serverless ~$691/month (4 OCU floor, no scale-to-zero) | Aurora pgvector ~$0 idle / ~$14 active | ~$691/month |
+| Vector Store | OpenSearch Serverless ~$691/month<br />(4 OCU floor, no scale-to-zero) | Aurora pgvector ~$0 idle / ~$14 active | ~$691/month |
 | VPC Interface Endpoints | ~$29/month (4 endpoints) | $0 (Lambdas moved out of VPC) | ~$29/month |
 | Aurora min_capacity | ~$43/month (0.5 ACU floor) | ~$0 idle (min = 0) | ~$43/month |
 | S3 (3 buckets) | ~$0.15/month | ~$0.15/month | — |
