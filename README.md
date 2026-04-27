@@ -457,18 +457,17 @@ Then push a new tag to trigger the pipeline.
 
 ## Cost Estimate
 
-| Service | Cost/month |
-|---|---|
-| Aurora Serverless v2 (0.5 ACU min) | ~$43/month |
-| VPC Interface Endpoints (3) | ~$22/month |
-| S3 (3 buckets, ~500MB) | ~$0.15/month |
-| CloudFront | ~$0.01/month |
-| Lambda (4 functions, low traffic) | ~$0.00/month |
-| API Gateway | ~$0.00/month |
-| Secrets Manager | ~$0.80/month |
-| **Total** | **~$66/month** |
-
-> Aurora Serverless v2 scales to near zero when idle. For dev/demo use, stop the cluster when not in use to minimize costs.
+| Service | Original Setup | Current Setup | Saving |
+|---|---|---|---|
+| Vector Store | OpenSearch Serverless ~$691/month (4 OCU floor, no scale-to-zero) | Aurora pgvector ~$0 idle / ~$14 active | ~$691/month |
+| VPC Interface Endpoints | ~$29/month (4 endpoints) | $0 (Lambdas moved out of VPC) | ~$29/month |
+| Aurora min_capacity | ~$43/month (0.5 ACU floor) | ~$0 idle (min = 0) | ~$43/month |
+| S3 (3 buckets) | ~$0.15/month | ~$0.15/month | — |
+| CloudFront | ~$0.01/month | ~$0.01/month | — |
+| Lambda (5 functions) | ~$0/month | ~$0/month | — |
+| API Gateway | ~$0/month | ~$0/month | — |
+| Secrets Manager | ~$0.80/month | ~$0.80/month | — |
+| **Total** | **~$763/month** | **~$1/month idle** | **~$762/month** |
 
 ---
 

@@ -51,23 +51,6 @@ resource "aws_security_group" "lambda" {
   tags = { Name = "${var.project_name}-lambda-sg" }
 }
 
-# Security group for VPC endpoints
-resource "aws_security_group" "vpc_endpoints" {
-  name        = "${var.project_name}-vpce-sg"
-  description = "Security group for VPC endpoints"
-  vpc_id      = aws_vpc.main.id
-
-  ingress {
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    security_groups = [aws_security_group.lambda.id]
-    description     = "HTTPS from Lambda"
-  }
-
-  tags = { Name = "${var.project_name}-vpce-sg" }
-}
-
 # VPC Endpoint - S3 (Gateway type, free)
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.main.id
@@ -76,52 +59,4 @@ resource "aws_vpc_endpoint" "s3" {
   route_table_ids   = [aws_route_table.private.id]
 
   tags = { Name = "${var.project_name}-s3-endpoint" }
-}
-
-# VPC Endpoint - Bedrock Runtime
-resource "aws_vpc_endpoint" "bedrock_runtime" {
-  vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.${var.aws_region}.bedrock-runtime"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = aws_subnet.private[*].id
-  security_group_ids  = [aws_security_group.vpc_endpoints.id]
-  private_dns_enabled = true
-
-  tags = { Name = "${var.project_name}-bedrock-runtime-endpoint" }
-}
-
-# VPC Endpoint - Bedrock Agent Runtime (for Knowledge Base)
-resource "aws_vpc_endpoint" "bedrock_agent_runtime" {
-  vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.${var.aws_region}.bedrock-agent-runtime"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = aws_subnet.private[*].id
-  security_group_ids  = [aws_security_group.vpc_endpoints.id]
-  private_dns_enabled = true
-
-  tags = { Name = "${var.project_name}-bedrock-agent-runtime-endpoint" }
-}
-
-# VPC Endpoint - Secrets Manager
-resource "aws_vpc_endpoint" "secretsmanager" {
-  vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.${var.aws_region}.secretsmanager"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = aws_subnet.private[*].id
-  security_group_ids  = [aws_security_group.vpc_endpoints.id]
-  private_dns_enabled = true
-
-  tags = { Name = "${var.project_name}-secretsmanager-endpoint" }
-}
-
-# VPC Endpoint - Bedrock Agent (for sync jobs)
-resource "aws_vpc_endpoint" "bedrock_agent" {
-  vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.${var.aws_region}.bedrock-agent"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = aws_subnet.private[*].id
-  security_group_ids  = [aws_security_group.vpc_endpoints.id]
-  private_dns_enabled = true
-
-  tags = { Name = "${var.project_name}-bedrock-agent-endpoint" }
 }

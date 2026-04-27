@@ -14,11 +14,6 @@ resource "aws_lambda_function" "authorizer" {
   timeout          = 10
   memory_size      = 128
 
-  vpc_config {
-    subnet_ids         = aws_subnet.private[*].id
-    security_group_ids = [aws_security_group.lambda.id]
-  }
-
   environment {
     variables = {
       SECRET_ARN = aws_secretsmanager_secret.api_key.arn

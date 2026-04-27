@@ -19,7 +19,7 @@ resource "aws_iam_role" "lambda_ingest" {
 
 resource "aws_iam_role_policy_attachment" "lambda_ingest_vpc" {
   role       = aws_iam_role.lambda_ingest.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_role_policy" "lambda_ingest" {
@@ -45,11 +45,6 @@ resource "aws_lambda_function" "ingest" {
   role             = aws_iam_role.lambda_ingest.arn
   timeout          = 30
   memory_size      = 128
-
-  vpc_config {
-    subnet_ids         = aws_subnet.private[*].id
-    security_group_ids = [aws_security_group.lambda.id]
-  }
 
   environment {
     variables = {

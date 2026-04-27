@@ -83,7 +83,7 @@ resource "aws_iam_role" "lambda_query" {
 
 resource "aws_iam_role_policy_attachment" "lambda_query_vpc" {
   role       = aws_iam_role.lambda_query.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_role_policy" "lambda_query" {
@@ -123,7 +123,7 @@ resource "aws_iam_role" "lambda_authorizer" {
 
 resource "aws_iam_role_policy_attachment" "lambda_authorizer_vpc" {
   role       = aws_iam_role.lambda_authorizer.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_role_policy" "lambda_authorizer" {
@@ -158,7 +158,7 @@ resource "aws_iam_role" "lambda_ingestion" {
 
 resource "aws_iam_role_policy_attachment" "lambda_ingestion_vpc" {
   role       = aws_iam_role.lambda_ingestion.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_role_policy" "lambda_ingestion" {

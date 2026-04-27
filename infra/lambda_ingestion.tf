@@ -14,11 +14,6 @@ resource "aws_lambda_function" "ingestion" {
   timeout          = 60
   memory_size      = 128
 
-  vpc_config {
-    subnet_ids         = aws_subnet.private[*].id
-    security_group_ids = [aws_security_group.lambda.id]
-  }
-
   environment {
     variables = {
       KNOWLEDGE_BASE_ID = aws_bedrockagent_knowledge_base.main.id
