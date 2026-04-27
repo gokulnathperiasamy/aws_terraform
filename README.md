@@ -1,19 +1,16 @@
-# NPTEL IoT Chatbot — AWS Bedrock + Terraform
+# NPTEL IoT Chatbot using AWS Bedrock and Terraform
 
-A Q&A chatbot over 12 weeks of lecture PDFs using a two-step RAG pipeline powered by Amazon Bedrock Knowledge Base, Aurora PostgreSQL (pgvector), and OpenAI GPT OSS 20B on Bedrock.
+A Q&A chatbot over 12 weeks of lecture PDFs using a two-step RAG pipeline powered by Amazon Bedrock Knowledge Base, Aurora PostgreSQL (pgvector) and OpenAI GPT OSS 20B on Bedrock.
 
 ---
 
-## TL;DR — Quick Start
-
-> Full setup in 6 steps. Takes ~15 minutes.
+## TL;DR (Quick Start)
 
 **1. Install tools**
 ```bash
 brew install awscli hashicorp/tap/terraform
 aws configure   # enter your AWS access key, secret, region: us-east-1
 ```
-
 
 **2. Set variables**
 ```bash
@@ -27,7 +24,7 @@ terraform init
 terraform apply
 ```
 
-**3. Update API URL in webpage**
+**4. Update API URL in webpage**
 ```js
 // webpage/index.html
 const API_URL = "<api_gateway_invoke_url from terraform output>";
@@ -78,8 +75,6 @@ Aurora PostgreSQL + pgvector                                        │
                                                                 GPT Answer 
                                                        (Reasoning & References)
 ```
-
-All Lambda functions run inside a private VPC with VPC endpoints — no internet gateway required.
 
 ---
 
@@ -134,8 +129,6 @@ User question
 | Auth | Lambda (authorizer) | Validates x-api-key header via Secrets Manager |
 | API | API Gateway | REST endpoint with CORS + header-based auth |
 | Secret Storage | Secrets Manager | Stores API key + Aurora DB credentials |
-| Networking | VPC + Private Subnets | Isolates all Lambdas and Aurora from public internet |
-| VPC Endpoints | Interface + Gateway | Private access to S3, Bedrock, Secrets Manager |
 | Static Website | S3 + CloudFront | Hosts the chatbot webpage over HTTPS |
 
 ---
