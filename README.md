@@ -467,7 +467,7 @@ Then push a new tag to trigger the pipeline.
 | Lambda (5 functions) | ~$0/month | ~$0/month | — |
 | API Gateway | ~$0/month | ~$0/month | — |
 | Secrets Manager | ~$0.80/month | ~$0.80/month | — |
-| **Total** | **~$763/month** | **~$1/month idle** | **~$762/month** |
+| **Total** | **~$763/month** | **~$1-$14/month** | **~$749-$762/month** |
 
 ---
 
