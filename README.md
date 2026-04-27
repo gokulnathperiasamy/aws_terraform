@@ -20,20 +20,20 @@ Lambda Authorizer
  │  validates key against Secrets Manager
  ▼
 Query Lambda  ──────────────────────────────────────────────────────┐
- │                                                                   │
- │  Step 1: RETRIEVE                          Step 2: GENERATE       │
- │                                                                   │
- ▼                                                                   ▼
+ │                                                                  │
+ │  Step 1: RETRIEVE                          Step 2: GENERATE      │
+ │                                                                  │
+ ▼                                                                  ▼
 Bedrock KB Retrieve API                          Bedrock InvokeModel
  │  embeds question via Titan Embed v2            openai.gpt-oss-20b-1:0
- ▼                                                 │
-Aurora PostgreSQL + pgvector                       │
- │  HNSW cosine similarity search                  │
- │  returns top 5 matching chunks                  │
- └──────────── context injected into prompt ───────┘
-                                                   │
-                                                   ▼
-                                 Answer + Reasoning + References
+ ▼                                                        │
+Aurora PostgreSQL + pgvector                              │
+ │  HNSW cosine similarity search                         │
+ │  returns top 5 matching chunks                         │
+ └──────────── context injected into prompt ──────────────┘
+                                                          │
+                                                          ▼
+                                            Answer + Reasoning + References
 ```
 
 All Lambda functions run inside a private VPC with VPC endpoints — no internet gateway required.
@@ -41,8 +41,6 @@ All Lambda functions run inside a private VPC with VPC endpoints — no internet
 ---
 
 ## RAG Pipeline
-
-RAG (Retrieval-Augmented Generation) is the core of this chatbot. It has two phases:
 
 ### Phase 1 — Indexing (Offline, runs on PDF upload)
 
@@ -189,12 +187,8 @@ Default output format: json
 
 ### 4. Enable Bedrock Model Access
 
-- Go to: https://console.aws.amazon.com/bedrock/home#/modelaccess
-- Click **Modify model access**
-- Enable both models:
-  - `amazon.titan-embed-text-v2:0` — used for embedding during indexing and retrieval
-  - `openai.gpt-oss-20b-1:0` — used for answer generation
-- Click **Save changes**
+- `amazon.titan-embed-text-v2:0` used for embedding during indexing and retrieval
+- `openai.gpt-oss-20b-1:0` used for answer generation
 
 ### 5. Set Up terraform.tfvars
 
@@ -243,7 +237,7 @@ Terraform will:
 After `terraform apply`, update the API URL in `webpage/index.html`:
 
 ```js
-const API_URL = "https://i3arb3ey53.execute-api.us-east-1.amazonaws.com/v1/chat";
+const API_URL = "https://<your-api-uri>.amazonaws.com/v1/chat";
 const API_KEY = "NPTEL-2026-IOT-BLR";
 ```
 
@@ -255,21 +249,9 @@ terraform apply
 
 Open the chatbot at the `website_url` from terraform output:
 ```
-https://ded2w1e3jg3jd.cloudfront.net
+https://<your-uri>.cloudfront.net
 ```
 
-### Webpage Features
-
-- Matte black theme (`#1a1a1a` background)
-- Textarea input with 12px rounded corners
-- `Find Answer` — primary button (grey background, black text)
-- `Reset` — secondary button (grey border, grey text) — clears the entire page
-- Answer displayed in a focused card with white text
-- Reasoning shown as italic muted grey subtext below the answer
-- References rendered as cards at the bottom with source name + excerpt
-- `Ctrl+Enter` keyboard shortcut to submit
-
----
 
 ## Trigger Ingestion
 
