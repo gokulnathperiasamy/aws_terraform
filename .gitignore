@@ -11,5 +11,8 @@ terraform.tfvars
 # Lambda zip artifacts
 *.zip
 
+# Source PDFs
+*.pdf
+
 # macOS
 .DS_Store
