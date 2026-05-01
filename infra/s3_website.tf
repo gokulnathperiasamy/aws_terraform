@@ -42,10 +42,17 @@ resource "aws_s3_bucket_policy" "website" {
   })
 }
 
+locals {
+  index_html_raw      = file("${path.root}/webpage/index.html")
+  api_url_placeholder = "https://chat-uri.execute-api.us-east-1.amazonaws.com/v1/chat"
+  api_url_actual      = "${aws_api_gateway_stage.main.invoke_url}/chat"
+  index_html_rendered = replace(local.index_html_raw, local.api_url_placeholder, local.api_url_actual)
+}
+
 resource "aws_s3_object" "index_html" {
   bucket       = aws_s3_bucket.website.id
   key          = "index.html"
-  source       = "${path.root}/webpage/index.html"
+  content      = local.index_html_rendered
   content_type = "text/html"
-  etag         = filemd5("${path.root}/webpage/index.html")
+  etag         = md5(local.index_html_rendered)
 }
