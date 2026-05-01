@@ -46,3 +46,15 @@ resource "aws_cloudfront_distribution" "website" {
 
   tags = { Name = "${var.project_name}-website" }
 }
+
+resource "null_resource" "cloudfront_invalidation" {
+  triggers = {
+    index_html_etag = aws_s3_object.index_html.etag
+  }
+
+  provisioner "local-exec" {
+    command = "aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.website.id} --paths '/*' --region ${var.aws_region}"
+  }
+
+  depends_on = [aws_s3_object.index_html]
+}

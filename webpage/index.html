@@ -5,6 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Exam Syllabus Chatbot</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
   <style>
     *,
     *::before,
@@ -195,6 +199,25 @@
       line-height: 1.5;
     }
 
+    /* Markdown rendered content */
+    .answer-text h1, .answer-text h2, .answer-text h3 {
+      color: #ccc;
+      margin: 12px 0 6px;
+      font-size: 15px;
+    }
+    .answer-text p { margin: 6px 0; }
+    .answer-text ul, .answer-text ol { padding-left: 20px; margin: 6px 0; }
+    .answer-text li { margin: 3px 0; }
+    .answer-text strong { color: #ddd; }
+    .answer-text hr { border-color: #333; margin: 10px 0; }
+    .answer-text code { background: #2a2a2a; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+
+    /* Markdown tables */
+    .answer-text table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+    .answer-text th { background: #2a2a2a; color: #ccc; font-weight: 600; padding: 8px 12px; border: 1px solid #3a3a3a; text-align: left; }
+    .answer-text td { padding: 7px 12px; border: 1px solid #2e2e2e; color: #bbb; vertical-align: top; }
+    .answer-text tr:nth-child(even) td { background: #1e1e1e; }
+
     /* Loading spinner */
     .spinner {
       display: none;
@@ -304,12 +327,57 @@
       }
     }
 
+    const KATEX_OPTS = {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false }
+      ],
+      throwOnError: false
+    };
+
+    function renderMarkdownMath(el, text) {
+      // Extract math blocks before marked processes them (marked mangles backslashes)
+      const mathBlocks = [];
+      const placeholder = (i) => `MATHBLOCK_${i}_END`;
+
+      // Protect display math \[...\] and $$...$$
+      let protected_text = text
+        .replace(/\$\$([\s\S]+?)\$\$/g, (_, math) => {
+          mathBlocks.push({ display: true, math });
+          return placeholder(mathBlocks.length - 1);
+        })
+        .replace(/\\\[([\s\S]+?)\\\]/g, (_, math) => {
+          mathBlocks.push({ display: true, math });
+          return placeholder(mathBlocks.length - 1);
+        })
+        // Protect inline math \(...\) and $...$
+        .replace(/\\\(([\s\S]+?)\\\)/g, (_, math) => {
+          mathBlocks.push({ display: false, math });
+          return placeholder(mathBlocks.length - 1);
+        })
+        .replace(/\$([^\$\n]+?)\$/g, (_, math) => {
+          mathBlocks.push({ display: false, math });
+          return placeholder(mathBlocks.length - 1);
+        });
+
+      // Run marked on the protected text
+      el.innerHTML = marked.parse(protected_text);
+
+      // Restore math blocks and render with KaTeX
+      mathBlocks.forEach((block, i) => {
+        el.innerHTML = el.innerHTML.replace(
+          placeholder(i),
+          katex.renderToString(block.math, { displayMode: block.display, throwOnError: false })
+        );
+      });
+    }
+
     function renderResult(data) {
-      document.getElementById("answerText").textContent = data.answer || "";
+      renderMarkdownMath(document.getElementById("answerText"), data.answer || "");
 
       const reasoningEl = document.getElementById("reasoningText");
       if (data.reasoning) {
-        reasoningEl.textContent = data.reasoning;
+        renderMarkdownMath(reasoningEl, data.reasoning);
         reasoningEl.style.display = "block";
       } else {
         reasoningEl.style.display = "none";
@@ -327,10 +395,14 @@
         data.references.forEach(ref => {
           const card = document.createElement("div");
           card.className = "reference-card";
-          card.innerHTML = `
-            <div class="reference-source">$${ref.source}</div>
-            <div class="reference-excerpt">$${ref.excerpt}</div>
-          `;
+          const sourceEl = document.createElement("div");
+          sourceEl.className = "reference-source";
+          sourceEl.textContent = ref.source;
+          const excerptEl = document.createElement("div");
+          excerptEl.className = "reference-excerpt";
+          renderMarkdownMath(excerptEl, ref.excerpt);
+          card.appendChild(sourceEl);
+          card.appendChild(excerptEl);
           refsSection.appendChild(card);
         });
       }
