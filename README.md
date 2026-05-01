@@ -483,3 +483,46 @@ terraform destroy
 ```
 
 > Note: S3 buckets have `force_destroy = true` and Secrets Manager secrets have `recovery_window_in_days = 0` so all resources are cleanly removed.
+
+### If Destroy Fails on Bedrock Data Source
+
+Bedrock KB data source deletion can fail with `DELETE_UNSUCCESSFUL` if it tries to clean up vectors from Aurora. Fix it by setting the deletion policy to `RETAIN` first:
+
+```bash
+# 1. Get the KB and data source IDs
+aws bedrock-agent list-knowledge-bases --region us-east-1
+aws bedrock-agent list-data-sources --knowledge-base-id <kb-id> --region us-east-1
+
+# 2. Get the exact data source config
+aws bedrock-agent get-data-source \
+  --knowledge-base-id <kb-id> \
+  --data-source-id <ds-id> \
+  --region us-east-1
+
+# 3. Set deletion policy to RETAIN
+aws bedrock-agent update-data-source \
+  --knowledge-base-id <kb-id> \
+  --data-source-id <ds-id> \
+  --name "<data-source-name>" \
+  --data-deletion-policy RETAIN \
+  --data-source-configuration '{"type":"S3","s3Configuration":{"bucketArn":"<bucket-arn>","inclusionPrefixes":["documents/"]}}' \
+  --vector-ingestion-configuration '{"chunkingConfiguration":{"chunkingStrategy":"FIXED_SIZE","fixedSizeChunkingConfiguration":{"maxTokens":512,"overlapPercentage":20}}}' \
+  --region us-east-1
+
+# 4. Delete data source and KB
+aws bedrock-agent delete-data-source \
+  --knowledge-base-id <kb-id> \
+  --data-source-id <ds-id> \
+  --region us-east-1
+
+aws bedrock-agent delete-knowledge-base \
+  --knowledge-base-id <kb-id> \
+  --region us-east-1
+
+# 5. Remove from Terraform state and re-run destroy
+terraform state rm module.nptel_chatbot.aws_bedrockagent_knowledge_base.main
+terraform state rm module.nptel_chatbot.aws_bedrockagent_data_source.s3
+terraform destroy
+```
+
+> This is already handled in `bedrock.tf` via `data_deletion_policy = "RETAIN"` for new deployments.

@@ -1,0 +1,1116 @@
+{
+  "version": 4,
+  "terraform_version": "1.14.9",
+  "serial": 246,
+  "lineage": "5f169490-8b20-f9db-d873-c3046a6e1871",
+  "outputs": {},
+  "resources": [
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "data",
+      "type": "archive_file",
+      "name": "pgvector_setup",
+      "provider": "provider[\"registry.terraform.io/hashicorp/archive\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "exclude_symlink_directories": null,
+            "excludes": null,
+            "id": "3e96d63b890416af8a42d02de95e818095656d3c",
+            "output_base64sha256": "KJN0V+ltqg5jw4uC4QmTGE7mHiNdZ+xhdRGDj+dTkng=",
+            "output_base64sha512": "DW1YimO23GQrEYC5lsYIQJNYE0lzO/ziYpjaVsZNrcrcv4ZwoRyCA1yeuK9mErx8Rrr4UAhXcR5EyDEaB7bd/w==",
+            "output_file_mode": null,
+            "output_md5": "871b4de9dc3e163c535d75b45a95347d",
+            "output_path": "./.terraform/lambda_zips/pgvector_setup.zip",
+            "output_sha": "3e96d63b890416af8a42d02de95e818095656d3c",
+            "output_sha256": "28937457e96daa0e63c38b82e10993184ee61e235d67ec617511838fe7539278",
+            "output_sha512": "0d6d588a63b6dc642b1180b996c6084093581349733bfce26298da56c64dadcadcbf8670a11c82035c9eb8af6612bc7c46baf8500857711e44c8311a07b6ddff",
+            "output_size": 633,
+            "source": [],
+            "source_content": null,
+            "source_content_filename": null,
+            "source_dir": null,
+            "source_file": "./lambda/pgvector_setup/handler.py",
+            "type": "zip"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "data",
+      "type": "archive_file",
+      "name": "psycopg2_layer",
+      "provider": "provider[\"registry.terraform.io/hashicorp/archive\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "exclude_symlink_directories": null,
+            "excludes": null,
+            "id": "188ee9415ac249a9417afd8b7b270f09ae29315e",
+            "output_base64sha256": "Vkk7xNk0XrXstcHASSIcjo87/Pq4to6240xUbNlnU+g=",
+            "output_base64sha512": "OYQOPYNba2C/TMzNXtjFQzAkC+qejwYxOpTdLIvzYiLz748NKwXU+OHhuxJKPmBdTmXk0cn4J83DbOMwFPSF6A==",
+            "output_file_mode": null,
+            "output_md5": "37d19e42d77e76ec1bf6074289f4857f",
+            "output_path": "./.terraform/lambda_zips/psycopg2_layer.zip",
+            "output_sha": "188ee9415ac249a9417afd8b7b270f09ae29315e",
+            "output_sha256": "56493bc4d9345eb5ecb5c1c049221c8e8f3bfcfab8b68eb6e34c546cd96753e8",
+            "output_sha512": "39840e3d835b6b60bf4ccccd5ed8c54330240bea9e8f06313a94dd2c8bf36222f3ef8f0d2b05d4f8e1e1bb124a3e605d4e65e4d1c9f827cdc36ce33014f485e8",
+            "output_size": 4514117,
+            "source": [],
+            "source_content": null,
+            "source_content_filename": null,
+            "source_dir": "./lambda/pgvector_setup/layer",
+            "source_file": null,
+            "type": "zip"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "current",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "account_id": "256211928684",
+            "arn": "arn:aws:iam::256211928684:root",
+            "id": "256211928684",
+            "user_id": "256211928684"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_bedrockagent_data_source",
+      "name": "s3",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "data_deletion_policy": "DELETE",
+            "data_source_configuration": [
+              {
+                "confluence_configuration": [],
+                "s3_configuration": [
+                  {
+                    "bucket_arn": "arn:aws:s3:::nptel-qa-iot-2026-raw-data-f2ddb82c",
+                    "bucket_owner_account_id": null,
+                    "inclusion_prefixes": [
+                      "documents/"
+                    ]
+                  }
+                ],
+                "salesforce_configuration": [],
+                "share_point_configuration": [],
+                "type": "S3",
+                "web_configuration": []
+              }
+            ],
+            "data_source_id": "LB8U9JLPSC",
+            "description": null,
+            "id": "LB8U9JLPSC,ZLHXKN5JFO",
+            "knowledge_base_id": "ZLHXKN5JFO",
+            "name": "nptel-qa-iot-2026-knowledge-base-s3-datasource",
+            "server_side_encryption_configuration": [],
+            "timeouts": null,
+            "vector_ingestion_configuration": [
+              {
+                "chunking_configuration": [
+                  {
+                    "chunking_strategy": "FIXED_SIZE",
+                    "fixed_size_chunking_configuration": [
+                      {
+                        "max_tokens": 512,
+                        "overlap_percentage": 20
+                      }
+                    ],
+                    "hierarchical_chunking_configuration": [],
+                    "semantic_chunking_configuration": []
+                  }
+                ],
+                "custom_transformation_configuration": [],
+                "parsing_configuration": []
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "dependencies": [
+            "module.nptel_chatbot.aws_bedrockagent_knowledge_base.main",
+            "module.nptel_chatbot.aws_db_subnet_group.main",
+            "module.nptel_chatbot.aws_iam_role.bedrock_kb",
+            "module.nptel_chatbot.aws_iam_role.lambda_pgvector_setup",
+            "module.nptel_chatbot.aws_lambda_function.pgvector_setup",
+            "module.nptel_chatbot.aws_lambda_layer_version.psycopg2",
+            "module.nptel_chatbot.aws_rds_cluster.main",
+            "module.nptel_chatbot.aws_rds_cluster_instance.main",
+            "module.nptel_chatbot.aws_s3_bucket.raw_data",
+            "module.nptel_chatbot.aws_secretsmanager_secret.db_credentials",
+            "module.nptel_chatbot.aws_security_group.lambda",
+            "module.nptel_chatbot.aws_security_group.rds",
+            "module.nptel_chatbot.aws_subnet.private",
+            "module.nptel_chatbot.aws_vpc.main",
+            "module.nptel_chatbot.data.archive_file.pgvector_setup",
+            "module.nptel_chatbot.data.archive_file.psycopg2_layer",
+            "module.nptel_chatbot.data.aws_caller_identity.current",
+            "module.nptel_chatbot.null_resource.pgvector_setup",
+            "module.nptel_chatbot.random_id.suffix"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_db_subnet_group",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:rds:us-east-1:256211928684:subgrp:nptel-qa-iot-2026-db-subnet-group",
+            "description": "Managed by Terraform",
+            "id": "nptel-qa-iot-2026-db-subnet-group",
+            "name": "nptel-qa-iot-2026-db-subnet-group",
+            "name_prefix": "",
+            "subnet_ids": [
+              "subnet-05174dd1063a74429",
+              "subnet-07cc90c5bdeb23773"
+            ],
+            "supported_network_types": [
+              "IPV4"
+            ],
+            "tags": {
+              "Name": "nptel-qa-iot-2026-db-subnet-group"
+            },
+            "tags_all": {
+              "Name": "nptel-qa-iot-2026-db-subnet-group"
+            },
+            "vpc_id": "vpc-0288dc55aa4568b5c"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.nptel_chatbot.aws_subnet.private",
+            "module.nptel_chatbot.aws_vpc.main"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "bedrock_kb",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::256211928684:role/nptel-qa-iot-2026-bedrock-kb-role",
+            "assume_role_policy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Condition\":{\"StringEquals\":{\"aws:SourceAccount\":\"256211928684\"}},\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"bedrock.amazonaws.com\"}}],\"Version\":\"2012-10-17\"}",
+            "create_date": "2026-04-27T09:17:54Z",
+            "description": "",
+            "force_detach_policies": false,
+            "id": "nptel-qa-iot-2026-bedrock-kb-role",
+            "inline_policy": [
+              {
+                "name": "nptel-qa-iot-2026-bedrock-kb-policy",
+                "policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"s3:GetObject\",\"s3:ListBucket\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:s3:::nptel-qa-iot-2026-raw-data-f2ddb82c\",\"arn:aws:s3:::nptel-qa-iot-2026-raw-data-f2ddb82c/*\"]},{\"Action\":[\"bedrock:InvokeModel\"],\"Effect\":\"Allow\",\"Resource\":[\"arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0\"]},{\"Action\":[\"rds-data:ExecuteStatement\",\"rds-data:BatchExecuteStatement\",\"rds:DescribeDBClusters\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:rds:us-east-1:256211928684:cluster:nptel-qa-iot-2026-db\"},{\"Action\":[\"secretsmanager:GetSecretValue\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:secretsmanager:us-east-1:256211928684:secret:nptel-qa-iot-2026-db-credentials-f2ddb82c-0FbaUo\"}]}"
+              }
+            ],
+            "managed_policy_arns": [],
+            "max_session_duration": 3600,
+            "name": "nptel-qa-iot-2026-bedrock-kb-role",
+            "name_prefix": "",
+            "path": "/",
+            "permissions_boundary": "",
+            "tags": {},
+            "tags_all": {},
+            "unique_id": "AROATXJ3LYZWGUZ5YBWWN"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.nptel_chatbot.data.aws_caller_identity.current"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "lambda_pgvector_setup",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::256211928684:role/nptel-qa-iot-2026-lambda-pgvector-setup-role",
+            "assume_role_policy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"}}],\"Version\":\"2012-10-17\"}",
+            "create_date": "2026-04-27T09:17:54Z",
+            "description": "",
+            "force_detach_policies": false,
+            "id": "nptel-qa-iot-2026-lambda-pgvector-setup-role",
+            "inline_policy": [],
+            "managed_policy_arns": [
+              "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+            ],
+            "max_session_duration": 3600,
+            "name": "nptel-qa-iot-2026-lambda-pgvector-setup-role",
+            "name_prefix": "",
+            "path": "/",
+            "permissions_boundary": "",
+            "tags": {},
+            "tags_all": {},
+            "unique_id": "AROATXJ3LYZWAS4BENLOB"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "name": "pgvector_setup",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "architectures": [
+              "x86_64"
+            ],
+            "arn": "arn:aws:lambda:us-east-1:256211928684:function:nptel-qa-iot-2026-pgvector-setup",
+            "code_sha256": "KJN0V+ltqg5jw4uC4QmTGE7mHiNdZ+xhdRGDj+dTkng=",
+            "code_signing_config_arn": "",
+            "dead_letter_config": [],
+            "description": "",
+            "environment": [
+              {
+                "variables": {
+                  "DB_HOST": "nptel-qa-iot-2026-db.cluster-copzbbnsd1bb.us-east-1.rds.amazonaws.com",
+                  "DB_NAME": "npteldb",
+                  "DB_PASSWORD": "nptel-db-password-2026",
+                  "DB_PORT": "5432",
+                  "DB_USER": "npteladmin"
+                }
+              }
+            ],
+            "ephemeral_storage": [
+              {
+                "size": 512
+              }
+            ],
+            "file_system_config": [],
+            "filename": "./.terraform/lambda_zips/pgvector_setup.zip",
+            "function_name": "nptel-qa-iot-2026-pgvector-setup",
+            "handler": "handler.handler",
+            "id": "nptel-qa-iot-2026-pgvector-setup",
+            "image_config": [],
+            "image_uri": "",
+            "invoke_arn": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:256211928684:function:nptel-qa-iot-2026-pgvector-setup/invocations",
+            "kms_key_arn": "",
+            "last_modified": "2026-04-27T10:17:47.000+0000",
+            "layers": [
+              "arn:aws:lambda:us-east-1:256211928684:layer:nptel-qa-iot-2026-psycopg2:3"
+            ],
+            "logging_config": [
+              {
+                "application_log_level": "",
+                "log_format": "Text",
+                "log_group": "/aws/lambda/nptel-qa-iot-2026-pgvector-setup",
+                "system_log_level": ""
+              }
+            ],
+            "memory_size": 128,
+            "package_type": "Zip",
+            "publish": false,
+            "qualified_arn": "arn:aws:lambda:us-east-1:256211928684:function:nptel-qa-iot-2026-pgvector-setup:$LATEST",
+            "qualified_invoke_arn": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:256211928684:function:nptel-qa-iot-2026-pgvector-setup:$LATEST/invocations",
+            "replace_security_groups_on_destroy": null,
+            "replacement_security_group_ids": null,
+            "reserved_concurrent_executions": -1,
+            "role": "arn:aws:iam::256211928684:role/nptel-qa-iot-2026-lambda-pgvector-setup-role",
+            "runtime": "python3.12",
+            "s3_bucket": null,
+            "s3_key": null,
+            "s3_object_version": null,
+            "signing_job_arn": "",
+            "signing_profile_version_arn": "",
+            "skip_destroy": false,
+            "snap_start": [],
+            "source_code_hash": "KJN0V+ltqg5jw4uC4QmTGE7mHiNdZ+xhdRGDj+dTkng=",
+            "source_code_size": 633,
+            "tags": {
+              "Name": "nptel-qa-iot-2026-pgvector-setup"
+            },
+            "tags_all": {
+              "Name": "nptel-qa-iot-2026-pgvector-setup"
+            },
+            "timeout": 60,
+            "timeouts": null,
+            "tracing_config": [
+              {
+                "mode": "PassThrough"
+              }
+            ],
+            "version": "$LATEST",
+            "vpc_config": [
+              {
+                "ipv6_allowed_for_dual_stack": false,
+                "security_group_ids": [
+                  "sg-0c06da01a77c1163b"
+                ],
+                "subnet_ids": [
+                  "subnet-05174dd1063a74429",
+                  "subnet-07cc90c5bdeb23773"
+                ],
+                "vpc_id": "vpc-0288dc55aa4568b5c"
+              }
+            ]
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "environment"
+              },
+              {
+                "type": "index",
+                "value": {
+                  "value": 0,
+                  "type": "number"
+                }
+              },
+              {
+                "type": "get_attr",
+                "value": "variables"
+              },
+              {
+                "type": "index",
+                "value": {
+                  "value": "DB_PASSWORD",
+                  "type": "string"
+                }
+              }
+            ]
+          ],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6NjAwMDAwMDAwMDAwLCJ1cGRhdGUiOjYwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "module.nptel_chatbot.aws_db_subnet_group.main",
+            "module.nptel_chatbot.aws_iam_role.lambda_pgvector_setup",
+            "module.nptel_chatbot.aws_lambda_layer_version.psycopg2",
+            "module.nptel_chatbot.aws_rds_cluster.main",
+            "module.nptel_chatbot.aws_security_group.lambda",
+            "module.nptel_chatbot.aws_security_group.rds",
+            "module.nptel_chatbot.aws_subnet.private",
+            "module.nptel_chatbot.aws_vpc.main",
+            "module.nptel_chatbot.data.archive_file.pgvector_setup",
+            "module.nptel_chatbot.data.archive_file.psycopg2_layer"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_lambda_layer_version",
+      "name": "psycopg2",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:lambda:us-east-1:256211928684:layer:nptel-qa-iot-2026-psycopg2:3",
+            "code_sha256": "Vkk7xNk0XrXstcHASSIcjo87/Pq4to6240xUbNlnU+g=",
+            "compatible_architectures": [],
+            "compatible_runtimes": [
+              "python3.12"
+            ],
+            "created_date": "2026-04-27T09:18:02.964+0000",
+            "description": "",
+            "filename": "./.terraform/lambda_zips/psycopg2_layer.zip",
+            "id": "arn:aws:lambda:us-east-1:256211928684:layer:nptel-qa-iot-2026-psycopg2:3",
+            "layer_arn": "arn:aws:lambda:us-east-1:256211928684:layer:nptel-qa-iot-2026-psycopg2",
+            "layer_name": "nptel-qa-iot-2026-psycopg2",
+            "license_info": "",
+            "s3_bucket": null,
+            "s3_key": null,
+            "s3_object_version": null,
+            "signing_job_arn": "",
+            "signing_profile_version_arn": "",
+            "skip_destroy": false,
+            "source_code_hash": "Vkk7xNk0XrXstcHASSIcjo87/Pq4to6240xUbNlnU+g=",
+            "source_code_size": 4514117,
+            "version": "3"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.nptel_chatbot.data.archive_file.psycopg2_layer"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_rds_cluster",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "allocated_storage": 1,
+            "allow_major_version_upgrade": null,
+            "apply_immediately": null,
+            "arn": "arn:aws:rds:us-east-1:256211928684:cluster:nptel-qa-iot-2026-db",
+            "availability_zones": [
+              "us-east-1a",
+              "us-east-1b",
+              "us-east-1c"
+            ],
+            "backtrack_window": 0,
+            "backup_retention_period": 1,
+            "ca_certificate_identifier": null,
+            "ca_certificate_valid_till": null,
+            "cluster_identifier": "nptel-qa-iot-2026-db",
+            "cluster_identifier_prefix": "",
+            "cluster_members": [
+              "tf-20260427091856461000000013"
+            ],
+            "cluster_resource_id": "cluster-WIVRP5FWHUCCQQ2RGMQFTGTDLE",
+            "cluster_scalability_type": "",
+            "copy_tags_to_snapshot": false,
+            "database_insights_mode": "standard",
+            "database_name": "npteldb",
+            "db_cluster_instance_class": "",
+            "db_cluster_parameter_group_name": "default.aurora-postgresql16",
+            "db_instance_parameter_group_name": null,
+            "db_subnet_group_name": "nptel-qa-iot-2026-db-subnet-group",
+            "db_system_id": "",
+            "delete_automated_backups": true,
+            "deletion_protection": false,
+            "domain": "",
+            "domain_iam_role_name": "",
+            "enable_global_write_forwarding": false,
+            "enable_http_endpoint": true,
+            "enable_local_write_forwarding": false,
+            "enabled_cloudwatch_logs_exports": [],
+            "endpoint": "nptel-qa-iot-2026-db.cluster-copzbbnsd1bb.us-east-1.rds.amazonaws.com",
+            "engine": "aurora-postgresql",
+            "engine_lifecycle_support": "open-source-rds-extended-support",
+            "engine_mode": "provisioned",
+            "engine_version": "16.6",
+            "engine_version_actual": "16.6",
+            "final_snapshot_identifier": null,
+            "global_cluster_identifier": "",
+            "hosted_zone_id": "Z2R2ITUGPM61AM",
+            "iam_database_authentication_enabled": false,
+            "iam_roles": [],
+            "id": "nptel-qa-iot-2026-db",
+            "iops": 0,
+            "kms_key_id": "",
+            "manage_master_user_password": null,
+            "master_password": "nptel-db-password-2026",
+            "master_password_wo": null,
+            "master_password_wo_version": null,
+            "master_user_secret": [],
+            "master_user_secret_kms_key_id": null,
+            "master_username": "npteladmin",
+            "monitoring_interval": 0,
+            "monitoring_role_arn": "",
+            "network_type": "IPV4",
+            "performance_insights_enabled": false,
+            "performance_insights_kms_key_id": "",
+            "performance_insights_retention_period": 0,
+            "port": 5432,
+            "preferred_backup_window": "04:55-05:25",
+            "preferred_maintenance_window": "sun:09:16-sun:09:46",
+            "reader_endpoint": "nptel-qa-iot-2026-db.cluster-ro-copzbbnsd1bb.us-east-1.rds.amazonaws.com",
+            "replication_source_identifier": "",
+            "restore_to_point_in_time": [],
+            "s3_import": [],
+            "scaling_configuration": [],
+            "serverlessv2_scaling_configuration": [
+              {
+                "max_capacity": 1,
+                "min_capacity": 0,
+                "seconds_until_auto_pause": 300
+              }
+            ],
+            "skip_final_snapshot": true,
+            "snapshot_identifier": null,
+            "source_region": null,
+            "storage_encrypted": false,
+            "storage_type": "",
+            "tags": {
+              "Name": "nptel-qa-iot-2026-db"
+            },
+            "tags_all": {
+              "Name": "nptel-qa-iot-2026-db"
+            },
+            "timeouts": null,
+            "vpc_security_group_ids": [
+              "sg-0eae9f237e04eb299"
+            ]
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "master_password"
+              }
+            ],
+            [
+              {
+                "type": "get_attr",
+                "value": "master_password_wo"
+              }
+            ]
+          ],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo3MjAwMDAwMDAwMDAwLCJkZWxldGUiOjcyMDAwMDAwMDAwMDAsInVwZGF0ZSI6NzIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "module.nptel_chatbot.aws_db_subnet_group.main",
+            "module.nptel_chatbot.aws_security_group.lambda",
+            "module.nptel_chatbot.aws_security_group.rds",
+            "module.nptel_chatbot.aws_subnet.private",
+            "module.nptel_chatbot.aws_vpc.main"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_rds_cluster_instance",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "apply_immediately": null,
+            "arn": "arn:aws:rds:us-east-1:256211928684:db:tf-20260427091856461000000013",
+            "auto_minor_version_upgrade": true,
+            "availability_zone": "us-east-1b",
+            "ca_cert_identifier": "rds-ca-rsa2048-g1",
+            "cluster_identifier": "nptel-qa-iot-2026-db",
+            "copy_tags_to_snapshot": false,
+            "custom_iam_instance_profile": "",
+            "db_parameter_group_name": "default.aurora-postgresql16",
+            "db_subnet_group_name": "nptel-qa-iot-2026-db-subnet-group",
+            "dbi_resource_id": "db-C3SHPC5TCDQBIX37VYTBF4C6CE",
+            "endpoint": "tf-20260427091856461000000013.copzbbnsd1bb.us-east-1.rds.amazonaws.com",
+            "engine": "aurora-postgresql",
+            "engine_version": "16.6",
+            "engine_version_actual": "16.6",
+            "force_destroy": false,
+            "id": "tf-20260427091856461000000013",
+            "identifier": "tf-20260427091856461000000013",
+            "identifier_prefix": "tf-",
+            "instance_class": "db.serverless",
+            "kms_key_id": "",
+            "monitoring_interval": 0,
+            "monitoring_role_arn": "",
+            "network_type": "IPV4",
+            "performance_insights_enabled": false,
+            "performance_insights_kms_key_id": "",
+            "performance_insights_retention_period": 0,
+            "port": 5432,
+            "preferred_backup_window": "04:55-05:25",
+            "preferred_maintenance_window": "thu:06:12-thu:06:42",
+            "promotion_tier": 0,
+            "publicly_accessible": false,
+            "storage_encrypted": false,
+            "tags": {
+              "Name": "nptel-qa-iot-2026-db-instance"
+            },
+            "tags_all": {
+              "Name": "nptel-qa-iot-2026-db-instance"
+            },
+            "timeouts": null,
+            "writer": true
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo1NDAwMDAwMDAwMDAwLCJkZWxldGUiOjU0MDAwMDAwMDAwMDAsInVwZGF0ZSI6NTQwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "module.nptel_chatbot.aws_db_subnet_group.main",
+            "module.nptel_chatbot.aws_rds_cluster.main",
+            "module.nptel_chatbot.aws_security_group.lambda",
+            "module.nptel_chatbot.aws_security_group.rds",
+            "module.nptel_chatbot.aws_subnet.private",
+            "module.nptel_chatbot.aws_vpc.main"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "raw_data",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "acceleration_status": "",
+            "acl": null,
+            "arn": "arn:aws:s3:::nptel-qa-iot-2026-raw-data-f2ddb82c",
+            "bucket": "nptel-qa-iot-2026-raw-data-f2ddb82c",
+            "bucket_domain_name": "nptel-qa-iot-2026-raw-data-f2ddb82c.s3.amazonaws.com",
+            "bucket_prefix": "",
+            "bucket_regional_domain_name": "nptel-qa-iot-2026-raw-data-f2ddb82c.s3.us-east-1.amazonaws.com",
+            "cors_rule": [],
+            "force_destroy": true,
+            "grant": [
+              {
+                "id": "1642dc923d04d0e62cb72944248776304917ba737a8c8548f58dfd32531a97b7",
+                "permissions": [
+                  "FULL_CONTROL"
+                ],
+                "type": "CanonicalUser",
+                "uri": ""
+              }
+            ],
+            "hosted_zone_id": "Z3AQBSTGFYJSTF",
+            "id": "nptel-qa-iot-2026-raw-data-f2ddb82c",
+            "lifecycle_rule": [],
+            "logging": [],
+            "object_lock_configuration": [],
+            "object_lock_enabled": false,
+            "policy": "",
+            "region": "us-east-1",
+            "replication_configuration": [],
+            "request_payer": "BucketOwner",
+            "server_side_encryption_configuration": [
+              {
+                "rule": [
+                  {
+                    "apply_server_side_encryption_by_default": [
+                      {
+                        "kms_master_key_id": "",
+                        "sse_algorithm": "AES256"
+                      }
+                    ],
+                    "bucket_key_enabled": false
+                  }
+                ]
+              }
+            ],
+            "tags": {
+              "Name": "nptel-qa-iot-2026-raw-data"
+            },
+            "tags_all": {
+              "Name": "nptel-qa-iot-2026-raw-data"
+            },
+            "timeouts": null,
+            "versioning": [
+              {
+                "enabled": true,
+                "mfa_delete": false
+              }
+            ],
+            "website": [],
+            "website_domain": null,
+            "website_endpoint": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjM2MDAwMDAwMDAwMDAsInJlYWQiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "module.nptel_chatbot.random_id.suffix"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_secretsmanager_secret",
+      "name": "db_credentials",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:secretsmanager:us-east-1:256211928684:secret:nptel-qa-iot-2026-db-credentials-f2ddb82c-0FbaUo",
+            "description": "RDS credentials for Bedrock Knowledge Base",
+            "force_overwrite_replica_secret": false,
+            "id": "arn:aws:secretsmanager:us-east-1:256211928684:secret:nptel-qa-iot-2026-db-credentials-f2ddb82c-0FbaUo",
+            "kms_key_id": "",
+            "name": "nptel-qa-iot-2026-db-credentials-f2ddb82c",
+            "name_prefix": "",
+            "policy": "",
+            "recovery_window_in_days": 0,
+            "replica": [],
+            "tags": {
+              "Name": "nptel-qa-iot-2026-db-credentials"
+            },
+            "tags_all": {
+              "Name": "nptel-qa-iot-2026-db-credentials"
+            }
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.nptel_chatbot.random_id.suffix"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "lambda",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:256211928684:security-group/sg-0c06da01a77c1163b",
+            "description": "Security group for Lambda functions",
+            "egress": [
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "HTTPS to AWS services via VPC endpoints",
+                "from_port": 443,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 443
+              },
+              {
+                "cidr_blocks": [
+                  "10.0.0.0/16"
+                ],
+                "description": "PostgreSQL to RDS",
+                "from_port": 5432,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 5432
+              }
+            ],
+            "id": "sg-0c06da01a77c1163b",
+            "ingress": [],
+            "name": "nptel-qa-iot-2026-lambda-sg",
+            "name_prefix": "",
+            "owner_id": "256211928684",
+            "revoke_rules_on_delete": false,
+            "tags": {
+              "Name": "nptel-qa-iot-2026-lambda-sg"
+            },
+            "tags_all": {
+              "Name": "nptel-qa-iot-2026-lambda-sg"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0288dc55aa4568b5c"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6OTAwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=",
+          "dependencies": [
+            "module.nptel_chatbot.aws_vpc.main"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "rds",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:256211928684:security-group/sg-0eae9f237e04eb299",
+            "description": "Security group for Aurora PostgreSQL cluster",
+            "egress": [],
+            "id": "sg-0eae9f237e04eb299",
+            "ingress": [
+              {
+                "cidr_blocks": [],
+                "description": "PostgreSQL from Lambda",
+                "from_port": 5432,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [
+                  "sg-0c06da01a77c1163b"
+                ],
+                "self": false,
+                "to_port": 5432
+              }
+            ],
+            "name": "nptel-qa-iot-2026-rds-sg",
+            "name_prefix": "",
+            "owner_id": "256211928684",
+            "revoke_rules_on_delete": false,
+            "tags": {
+              "Name": "nptel-qa-iot-2026-rds-sg"
+            },
+            "tags_all": {
+              "Name": "nptel-qa-iot-2026-rds-sg"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0288dc55aa4568b5c"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6OTAwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=",
+          "dependencies": [
+            "module.nptel_chatbot.aws_security_group.lambda",
+            "module.nptel_chatbot.aws_vpc.main"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "private",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:256211928684:subnet/subnet-05174dd1063a74429",
+            "assign_ipv6_address_on_creation": false,
+            "availability_zone": "us-east-1a",
+            "availability_zone_id": "use1-az2",
+            "cidr_block": "10.0.1.0/24",
+            "customer_owned_ipv4_pool": "",
+            "enable_dns64": false,
+            "enable_lni_at_device_index": 0,
+            "enable_resource_name_dns_a_record_on_launch": false,
+            "enable_resource_name_dns_aaaa_record_on_launch": false,
+            "id": "subnet-05174dd1063a74429",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_association_id": "",
+            "ipv6_native": false,
+            "map_customer_owned_ip_on_launch": false,
+            "map_public_ip_on_launch": false,
+            "outpost_arn": "",
+            "owner_id": "256211928684",
+            "private_dns_hostname_type_on_launch": "ip-name",
+            "tags": {
+              "Name": "nptel-qa-iot-2026-private-1"
+            },
+            "tags_all": {
+              "Name": "nptel-qa-iot-2026-private-1"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0288dc55aa4568b5c"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "module.nptel_chatbot.aws_vpc.main"
+          ],
+          "create_before_destroy": true
+        },
+        {
+          "index_key": 1,
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:256211928684:subnet/subnet-07cc90c5bdeb23773",
+            "assign_ipv6_address_on_creation": false,
+            "availability_zone": "us-east-1b",
+            "availability_zone_id": "use1-az4",
+            "cidr_block": "10.0.2.0/24",
+            "customer_owned_ipv4_pool": "",
+            "enable_dns64": false,
+            "enable_lni_at_device_index": 0,
+            "enable_resource_name_dns_a_record_on_launch": false,
+            "enable_resource_name_dns_aaaa_record_on_launch": false,
+            "id": "subnet-07cc90c5bdeb23773",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_association_id": "",
+            "ipv6_native": false,
+            "map_customer_owned_ip_on_launch": false,
+            "map_public_ip_on_launch": false,
+            "outpost_arn": "",
+            "owner_id": "256211928684",
+            "private_dns_hostname_type_on_launch": "ip-name",
+            "tags": {
+              "Name": "nptel-qa-iot-2026-private-2"
+            },
+            "tags_all": {
+              "Name": "nptel-qa-iot-2026-private-2"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0288dc55aa4568b5c"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "module.nptel_chatbot.aws_vpc.main"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:256211928684:vpc/vpc-0288dc55aa4568b5c",
+            "assign_generated_ipv6_cidr_block": false,
+            "cidr_block": "10.0.0.0/16",
+            "default_network_acl_id": "acl-0b839a57c1ea6131d",
+            "default_route_table_id": "rtb-015b469a11a562fae",
+            "default_security_group_id": "sg-00f9b8cc4cb1005a5",
+            "dhcp_options_id": "dopt-9eaadde4",
+            "enable_dns_hostnames": true,
+            "enable_dns_support": true,
+            "enable_network_address_usage_metrics": false,
+            "id": "vpc-0288dc55aa4568b5c",
+            "instance_tenancy": "default",
+            "ipv4_ipam_pool_id": null,
+            "ipv4_netmask_length": null,
+            "ipv6_association_id": "",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_network_border_group": "",
+            "ipv6_ipam_pool_id": "",
+            "ipv6_netmask_length": 0,
+            "main_route_table_id": "rtb-015b469a11a562fae",
+            "owner_id": "256211928684",
+            "tags": {
+              "Name": "nptel-qa-iot-2026-vpc"
+            },
+            "tags_all": {
+              "Name": "nptel-qa-iot-2026-vpc"
+            }
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "null_resource",
+      "name": "pgvector_setup",
+      "provider": "provider[\"registry.terraform.io/hashicorp/null\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "7420119430963920859",
+            "triggers": {
+              "db_cluster_id": "nptel-qa-iot-2026-db"
+            }
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "dependencies": [
+            "module.nptel_chatbot.aws_db_subnet_group.main",
+            "module.nptel_chatbot.aws_iam_role.lambda_pgvector_setup",
+            "module.nptel_chatbot.aws_lambda_function.pgvector_setup",
+            "module.nptel_chatbot.aws_lambda_layer_version.psycopg2",
+            "module.nptel_chatbot.aws_rds_cluster.main",
+            "module.nptel_chatbot.aws_rds_cluster_instance.main",
+            "module.nptel_chatbot.aws_security_group.lambda",
+            "module.nptel_chatbot.aws_security_group.rds",
+            "module.nptel_chatbot.aws_subnet.private",
+            "module.nptel_chatbot.aws_vpc.main",
+            "module.nptel_chatbot.data.archive_file.pgvector_setup",
+            "module.nptel_chatbot.data.archive_file.psycopg2_layer"
+          ],
+          "create_before_destroy": true
+        }
+      ]
+    },
+    {
+      "module": "module.nptel_chatbot",
+      "mode": "managed",
+      "type": "random_id",
+      "name": "suffix",
+      "provider": "provider[\"registry.terraform.io/hashicorp/random\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "b64_std": "8t24LA==",
+            "b64_url": "8t24LA",
+            "byte_length": 4,
+            "dec": "4074616876",
+            "hex": "f2ddb82c",
+            "id": "8t24LA",
+            "keepers": null,
+            "prefix": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "create_before_destroy": true
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
