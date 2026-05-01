@@ -91,10 +91,10 @@ def _build_context(results):
 
 def _build_prompt(question, context_text):
     return (
-        "You are a helpful assistant answering questions based on lecture materials.\n"
+        "You are a helpful assistant answering questions based on exam syllabus materials.\n"
         "First, write your reasoning inside <reasoning>...</reasoning> tags.\n"
         "Then write the final answer clearly outside the tags.\n"
-        "Always cite the source document (e.g. 'Week 3 Lecture Material') and mention the chapter or section when relevant.\n"
+        "Always cite the source document name and mention the chapter or section when relevant.\n"
         "If the answer is not in the context, say you don't know.\n\n"
         f"Context:\n{context_text}\n\n"
         f"Question: {question}\n\n"
