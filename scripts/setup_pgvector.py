@@ -4,8 +4,8 @@ import psycopg2
 
 DB_ENDPOINT = sys.argv[1]  # format: host:port
 DB_PASSWORD = sys.argv[2]
-DB_NAME     = "npteldb"
-DB_USER     = "npteladmin"
+DB_NAME     = "examdb"
+DB_USER     = "examadmin"
 
 # Split host and port
 DB_HOST = DB_ENDPOINT.split(":")[0]

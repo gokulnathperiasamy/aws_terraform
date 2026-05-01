@@ -1,0 +1,2 @@
+Place your source PDF files in this directory before running terraform apply.
+Terraform will upload all files from this folder to the S3 bucket for ingestion into the Bedrock Knowledge Base.

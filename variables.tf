@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "project_name" {
   description = "Project name prefix for all resources"
   type        = string
-  default     = "nptel-qa-iot-2026"
+  default     = "exam-syllabus-chatbot"
 }
 
 variable "api_secret_key" {

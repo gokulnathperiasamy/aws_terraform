@@ -1,6 +1,6 @@
-# NPTEL IoT Chatbot using AWS Bedrock and Terraform
+# Exam Syllabus Chatbot using AWS Bedrock and Terraform
 
-A Q&A chatbot over 12 weeks of lecture PDFs using a two-step RAG pipeline powered by Amazon Bedrock Knowledge Base, Aurora PostgreSQL (pgvector) and OpenAI GPT OSS 20B on Bedrock.
+A Q&A chatbot over your exam syllabus PDFs using a two-step RAG pipeline powered by Amazon Bedrock Knowledge Base, Aurora PostgreSQL (pgvector) and OpenAI GPT OSS 20B on Bedrock.
 
 ---
 
@@ -18,23 +18,29 @@ cp terraform.tfvars.example terraform.tfvars
 # Edit terraform.tfvars — set api_secret_key and db_password
 ```
 
-**3. Deploy**
+**3. Add source PDFs**
+```
+Drop your syllabus PDF files into source_data/
+(Remove the PLACE_SOURCE_DATA_HERE placeholder file)
+```
+
+**4. Deploy**
 ```bash
 terraform init
 terraform apply
 ```
 
-**4. Update API URL in webpage**
+**5. Update API URL in webpage**
 ```js
 // webpage/index.html
 const API_URL = "<api_gateway_invoke_url from terraform output>";
 ```
 ```bash
 terraform apply   # re-apply to push updated index.html to S3
-// If fails to update, delete the instance from Cloud Front and apply again
+// If fails to update, delete the instance from CloudFront and apply again
 ```
 
-**5. Open the chatbot**
+**6. Open the chatbot**
 ```
 https://<website_url from terraform output>
 ```
@@ -108,7 +114,7 @@ User question
  └─ Step 2: GENERATE
       └── Retrieved chunks injected into prompt as context
            └── openai.gpt-oss-20b-1:0 (via Bedrock InvokeModel)
-                └── Generates answer + reasoning + source citations (Week X)
+                └── Generates answer + reasoning + source citations
 ```
 
 ---
@@ -117,7 +123,7 @@ User question
 
 | Component | AWS Service | Purpose |
 |---|---|---|
-| PDF Storage | S3 | Stores raw lecture PDFs |
+| PDF Storage | S3 | Stores raw syllabus PDFs |
 | Vector Store | Aurora PostgreSQL + pgvector | Stores embeddings for semantic search (HNSW index) |
 | Embedding Model | Titan Embed Text v2 | Converts text chunks and queries to vectors |
 | Generation Model | OpenAI GPT OSS 20B (Bedrock) | Generates answers from retrieved context |
@@ -138,7 +144,7 @@ User question
 
 ```
 AWS_Terraform/                   ← root (run terraform apply here)
-├── main.tf                      # Calls module nptel_chatbot from ./infra
+├── main.tf                      # Calls module exam_syllabus_chatbot from ./infra
 ├── variables.tf                 # Root input variables
 ├── outputs.tf                   # Proxies module outputs
 ├── terraform.tfvars             # Variable values (never commit this)
@@ -153,10 +159,10 @@ AWS_Terraform/                   ← root (run terraform apply here)
 │       └── layer/               # psycopg2-binary Lambda layer (Linux x86_64)
 ├── scripts/
 │   └── setup_pgvector.py        # Local pgvector setup script (alternative to Lambda)
-├── source_data/                 # Raw lecture PDFs (Week 1–12)
+├── source_data/                 # Place your syllabus PDFs here before deploying
 ├── webpage/
 │   └── index.html               # Chatbot UI — matte black theme, served via CloudFront
-└── infra/                       # Terraform module (nptel_chatbot)
+└── infra/                       # Terraform module (exam_syllabus_chatbot)
     ├── main.tf                  # Provider config, random suffix
     ├── variables.tf             # Module input variables
     ├── outputs.tf               # Module outputs
@@ -227,7 +233,11 @@ Default output format: json
 - `amazon.titan-embed-text-v2:0` used for embedding during indexing and retrieval
 - `openai.gpt-oss-20b-1:0` used for answer generation
 
-### 5. Set Up terraform.tfvars
+### 5. Add Source PDFs
+
+Drop your syllabus PDF files into `source_data/` (remove the `PLACE_SOURCE_DATA_HERE` placeholder file). Terraform will upload them to S3 on `terraform apply`.
+
+### 6. Set Up terraform.tfvars
 
 ```bash
 cp terraform.tfvars.example terraform.tfvars
@@ -237,8 +247,8 @@ Edit `terraform.tfvars`:
 
 ```hcl
 aws_region     = "us-east-1"
-project_name   = "nptel-qa-iot-2026"
-api_secret_key = "your-strong-secret-key"
+project_name   = "exam-syllabus-chatbot"
+api_secret_key = "EXAM_PREPERATION_KEY"
 db_password    = "your-db-password"
 ```
 
@@ -255,7 +265,7 @@ terraform apply
 
 Terraform will:
 1. Create VPC with 2 private subnets (for Aurora + pgvector_setup Lambda only)
-2. Create S3 bucket and upload all 12 PDFs from `source_data/`
+2. Create S3 bucket and upload all PDFs from `source_data/`
 3. Create Aurora Serverless v2 PostgreSQL cluster
 4. Deploy pgvector setup Lambda — creates `bedrock_kb_vectors` table with HNSW + GIN indexes
 5. Create Bedrock Knowledge Base pointing to Aurora via RDS Data API
@@ -275,7 +285,7 @@ After `terraform apply`, update the API URL in `webpage/index.html`:
 
 ```js
 const API_URL = "https://<your-api-uri>.amazonaws.com/v1/chat";
-const API_KEY = "NPTEL-2026-IOT-BLR";
+const API_KEY = "<your-api-secret-key>";
 ```
 
 Then re-apply to push the updated file to S3:
@@ -289,6 +299,7 @@ Open the chatbot at the `website_url` from terraform output:
 https://<your-uri>.cloudfront.net
 ```
 
+---
 
 ## Trigger Ingestion
 
@@ -296,7 +307,7 @@ Ingestion is triggered automatically by `terraform apply`. To trigger manually:
 
 ```bash
 curl -X GET <api_gateway_ingest_url from terraform output> \
-  -H "x-api-key: NPTEL-2026-IOT-BLR"
+  -H "x-api-key: <your-api-secret-key>"
 ```
 
 ### Example Response
@@ -309,7 +320,7 @@ curl -X GET <api_gateway_ingest_url from terraform output> \
 ```
 
 Ingestion takes a few minutes. Check status in:
-- AWS Console → Amazon Bedrock → Knowledge Bases → nptel-qa-iot-2026-knowledge-base → Sync History
+- AWS Console → Amazon Bedrock → Knowledge Bases → your knowledge base → Sync History
 
 ---
 
@@ -317,25 +328,21 @@ Ingestion takes a few minutes. Check status in:
 
 ```bash
 curl -X POST <api_gateway_invoke_url from terraform output> \
-  -H "x-api-key: NPTEL-2026-IOT-BLR" \
+  -H "x-api-key: <your-api-secret-key>" \
   -H "Content-Type: application/json" \
-  -d '{"question": "What topics are covered in Week 3?"}'
+  -d '{"question": "What topics are covered in Unit 3?"}'
 ```
 
 ### Example Response
 
 ```json
 {
-  "answer": "Week 3 covers database normalization including 1NF, 2NF, and 3NF as discussed in the Week 3 Lecture Material...",
-  "reasoning": "The context from Week 3 Course Material clearly describes normalization concepts...",
+  "answer": "Unit 3 covers database normalization including 1NF, 2NF, and 3NF...",
+  "reasoning": "The context clearly describes normalization concepts...",
   "references": [
     {
-      "source": "Week 3 Course Material",
+      "source": "Unit 3 Material",
       "excerpt": "Database normalization is the process of organizing a relational database..."
-    },
-    {
-      "source": "Week 2 Lecture Material",
-      "excerpt": "Entity-relationship diagrams form the foundation for understanding..."
     }
   ]
 }
@@ -393,7 +400,7 @@ CodePipeline
   terraform plan
   terraform apply -auto-approve
   ```
-- `terraform.tfvars` is **never committed** — it lives in SSM Parameter Store at `/nptel-qa-iot-2026/tfvars`
+- `terraform.tfvars` is **never committed** — it lives in SSM Parameter Store at `/<project_name>/tfvars`
 
 ### Push Code to CodeCommit
 
@@ -410,7 +417,7 @@ git push origin main
 > For CodeCommit HTTP authentication, use [git-remote-codecommit](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-git-remote-codecommit.html):
 > ```bash
 > pip install git-remote-codecommit
-> git remote set-url origin codecommit::us-east-1://nptel-qa-iot-2026
+> git remote set-url origin codecommit::us-east-1://<project_name>
 > ```
 
 ### Trigger a Deployment
@@ -428,11 +435,11 @@ If you need to change variable values (e.g. rotate the API key):
 
 ```bash
 aws ssm put-parameter \
-  --name "/nptel-qa-iot-2026/tfvars" \
+  --name "/<project_name>/tfvars" \
   --type SecureString \
   --overwrite \
   --value 'aws_region = "us-east-1"
-project_name = "nptel-qa-iot-2026"
+project_name = "exam-syllabus-chatbot"
 api_secret_key = "your-new-secret-key"
 db_password = "your-db-password"'
 ```
@@ -520,8 +527,8 @@ aws bedrock-agent delete-knowledge-base \
   --region us-east-1
 
 # 5. Remove from Terraform state and re-run destroy
-terraform state rm module.nptel_chatbot.aws_bedrockagent_knowledge_base.main
-terraform state rm module.nptel_chatbot.aws_bedrockagent_data_source.s3
+terraform state rm module.exam_syllabus_chatbot.aws_bedrockagent_knowledge_base.main
+terraform state rm module.exam_syllabus_chatbot.aws_bedrockagent_data_source.s3
 terraform destroy
 ```
 

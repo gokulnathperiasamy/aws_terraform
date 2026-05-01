@@ -1,5 +1,5 @@
 aws_region     = "us-east-1"
-project_name   = "nptel-qa-iot-2026"
+project_name   = "exam-syllabus-chatbot"
 api_secret_key = "<your-secret-key>"
 db_password    = "<your-db-password>"
 
