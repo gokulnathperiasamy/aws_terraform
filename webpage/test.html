@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Exam Syllabus Chatbot</title>
+  <title>Exam Syllabus Chatbot — Local Test</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
@@ -37,25 +37,16 @@
       gap: 32px;
     }
 
-    /* Header */
-    .header {
+    .test-banner {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      color: #856404;
       text-align: center;
     }
 
-    .header h1 {
-      font-size: 24px;
-      font-weight: 600;
-      color: #ffffff;
-      letter-spacing: 0.5px;
-    }
-
-    .header p {
-      margin-top: 8px;
-      font-size: 14px;
-      color: #888;
-    }
-
-    /* Input */
     textarea {
       width: 100%;
       background-color: #ffffff;
@@ -71,15 +62,9 @@
       font-family: inherit;
     }
 
-    textarea::placeholder {
-      color: #aaa;
-    }
+    textarea::placeholder { color: #aaa; }
+    textarea:focus { border-color: #888; }
 
-    textarea:focus {
-      border-color: #888;
-    }
-
-    /* Buttons */
     .actions {
       display: flex;
       gap: 12px;
@@ -96,43 +81,16 @@
       font-family: inherit;
     }
 
-    button:hover {
-      opacity: 0.85;
-    }
+    button:hover { opacity: 0.85; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    button:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+    .btn-primary { background-color: #1a1a1a; color: #ffffff; border: none; }
+    .btn-secondary { background-color: transparent; color: #555; border: 1px solid #bbb; }
 
-    .btn-primary {
-      background-color: #1a1a1a;
-      color: #ffffff;
-      border: none;
-    }
+    .divider { border: none; border-top: 1px solid #e0e0e0; }
 
-    .btn-secondary {
-      background-color: transparent;
-      color: #555;
-      border: 1px solid #bbb;
-    }
-
-    /* Divider */
-    .divider {
-      border: none;
-      border-top: 1px solid #e0e0e0;
-    }
-
-    /* Result */
-    .result {
-      display: none;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .result.visible {
-      display: flex;
-    }
+    .result { display: none; flex-direction: column; gap: 16px; }
+    .result.visible { display: flex; }
 
     .answer-box {
       background-color: #ffffff;
@@ -150,11 +108,7 @@
       margin-bottom: 10px;
     }
 
-    .answer-text {
-      font-size: 16px;
-      line-height: 1.7;
-      color: #1a1a1a;
-    }
+    .answer-text { font-size: 16px; line-height: 1.7; color: #1a1a1a; }
 
     .reasoning-text {
       margin-top: 12px;
@@ -164,12 +118,7 @@
       font-style: italic;
     }
 
-    /* References */
-    .references-section {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    .references-section { display: flex; flex-direction: column; gap: 10px; }
 
     .references-label {
       font-size: 11px;
@@ -186,25 +135,11 @@
       padding: 14px 18px;
     }
 
-    .reference-source {
-      font-size: 13px;
-      font-weight: 600;
-      color: #444;
-      margin-bottom: 4px;
-    }
+    .reference-source { font-size: 13px; font-weight: 600; color: #444; margin-bottom: 4px; }
+    .reference-excerpt { font-size: 12px; color: #888; line-height: 1.5; }
 
-    .reference-excerpt {
-      font-size: 12px;
-      color: #888;
-      line-height: 1.5;
-    }
-
-    /* Markdown rendered content */
-    .answer-text h1, .answer-text h2, .answer-text h3 {
-      color: #222;
-      margin: 12px 0 6px;
-      font-size: 15px;
-    }
+    /* Markdown */
+    .answer-text h1, .answer-text h2, .answer-text h3 { color: #222; margin: 12px 0 6px; font-size: 15px; }
     .answer-text p { margin: 6px 0; }
     .answer-text ul, .answer-text ol { padding-left: 20px; margin: 6px 0; }
     .answer-text li { margin: 3px 0; }
@@ -212,13 +147,12 @@
     .answer-text hr { border-color: #e0e0e0; margin: 10px 0; }
     .answer-text code { background: #f0f0f0; color: #333; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
 
-    /* Markdown tables */
+    /* Tables */
     .answer-text table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
     .answer-text th { background: #f0f0f0; color: #333; font-weight: 600; padding: 8px 12px; border: 1px solid #ddd; text-align: left; }
     .answer-text td { padding: 7px 12px; border: 1px solid #e8e8e8; color: #444; vertical-align: top; }
     .answer-text tr:nth-child(even) td { background: #fafafa; }
 
-    /* Loading spinner */
     .spinner {
       display: none;
       width: 18px;
@@ -230,31 +164,21 @@
       margin: auto;
     }
 
-    .spinner.visible {
-      display: inline-block;
-    }
+    .spinner.visible { display: inline-block; }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .btn-primary-inner {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .btn-primary-inner { display: flex; align-items: center; gap: 8px; }
   </style>
 </head>
 
 <body>
   <div class="container">
 
-    <!-- Input -->
+    <div class="test-banner">⚠️ Local test mode — using mock response, no API calls made</div>
+
     <textarea id="question" placeholder="Ask a question from the lecture materials..."></textarea>
 
-    <!-- Buttons -->
     <div class="actions">
       <button class="btn-secondary" onclick="reset()">Reset</button>
       <button class="btn-primary" id="findBtn" onclick="findAnswer()">
@@ -267,74 +191,79 @@
 
     <hr class="divider" />
 
-    <!-- Result -->
     <div class="result" id="result">
-
-      <!-- Answer + Reasoning -->
       <div class="answer-box">
         <div class="answer-label">Answer</div>
         <div class="answer-text" id="answerText"></div>
         <div class="reasoning-text" id="reasoningText"></div>
       </div>
-
-      <!-- References -->
       <div class="references-section" id="referencesSection"></div>
-
     </div>
 
   </div>
 
   <script>
-    const API_URL = "https://chat-uri.execute-api.us-east-1.amazonaws.com/v1/chat";
-    const API_KEY = "EXAM_PREPERATION_KEY";
+    const MOCK_RESPONSE = {
+      answer: `**Grover's Search Algorithm** finds a marked item among $N$ items using only $O(\\sqrt{N})$ oracle calls — a quadratic speedup over classical $O(N)$ search.
 
-    async function findAnswer() {
+---
+
+### Steps
+
+| Step | Action | Formula |
+|------|--------|---------|
+| 1 | Prepare uniform superposition | $|\\psi\\rangle = H^{\\otimes n}|0\\rangle^{\\otimes n} = \\frac{1}{\\sqrt{N}}\\sum_{x=0}^{N-1}|x\\rangle$ |
+| 2 | Oracle call | $O|x\\rangle = (-1)^{f(x)}|x\\rangle$ |
+| 3 | Diffusion operator | $D = 2|\\psi\\rangle\\langle\\psi| - I$ |
+| 4 | Grover iteration | $G = D \\cdot O$ |
+| 5 | Repeat $R$ times | $R \\approx \\frac{\\pi}{4}\\sqrt{\\frac{N}{M}}$ |
+| 6 | Measure | Yields marked item with probability $\\geq 1 - \\frac{M}{N}$ |
+
+---
+
+### Geometric Picture
+
+Each application of $G$ rotates the state vector by angle $\\theta$ in the subspace spanned by $|\\alpha\\rangle$ (unmarked) and $|\\beta\\rangle$ (marked):
+
+$$G^k|\\psi\\rangle = \\cos\\!\\left(\\frac{2k+1}{2}\\theta\\right)|\\alpha\\rangle + \\sin\\!\\left(\\frac{2k+1}{2}\\theta\\right)|\\beta\\rangle$$
+
+where $\\sin\\theta = 2\\sqrt{M(N-M)}/N$.
+
+For $M \\ll N$, the optimal number of iterations is:
+
+$$R = \\operatorname{CI}\\!\\left(\\frac{\\arccos\\sqrt{M/N}}{\\theta}\\right)$$`,
+
+      reasoning: "The context from Chapter 6 clearly describes the Grover iteration, geometric picture, and the quadratic speedup. The formula for R comes from Eq.(6.15).",
+
+      references: [
+        {
+          source: "Quantum-Computing-Chapter6",
+          excerpt: "The amplitude after $k$ Grover iterations satisfies $\\langle x_0 | \\psi_k \\rangle \\approx \\sin((2k+1)\\theta)$, where $\\sin\\theta = 2\\sqrt{M(N-M)}/N$ (Eq. 6.12)."
+        },
+        {
+          source: "Quantum-Computing-Chapter7",
+          excerpt: "In the NMR implementation, the Grover iteration for a 2-qubit system is $G = H^{\\otimes 2} P H^{\\otimes 2} O$ where $P = 2|0\\rangle\\langle 0| - I$ (Eq. 7.172)."
+        }
+      ]
+    };
+
+    function findAnswer() {
       const question = document.getElementById("question").value.trim();
       if (!question) return;
 
       setLoading(true);
       hideResult();
 
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": API_KEY,
-          },
-          body: JSON.stringify({ question }),
-        });
-
-        const data = await res.json();
-
-        if (data.error) {
-          showError(data.error);
-          return;
-        }
-
-        renderResult(data);
-
-      } catch (err) {
-        showError("Failed to reach the API. Please try again.");
-      } finally {
+      setTimeout(() => {
+        renderResult(MOCK_RESPONSE);
         setLoading(false);
-      }
+      }, 800);
     }
 
-    const KATEX_OPTS = {
-      delimiters: [
-        { left: '$$', right: '$$', display: true },
-        { left: '$', right: '$', display: false }
-      ],
-      throwOnError: false
-    };
-
     function renderMarkdownMath(el, text) {
-      // Extract math blocks before marked processes them (marked mangles backslashes)
       const mathBlocks = [];
       const placeholder = (i) => `MATHBLOCK_${i}_END`;
 
-      // Protect display math \[...\] and $$...$$
       let protected_text = text
         .replace(/\$\$([\s\S]+?)\$\$/g, (_, math) => {
           mathBlocks.push({ display: true, math });
@@ -344,7 +273,6 @@
           mathBlocks.push({ display: true, math });
           return placeholder(mathBlocks.length - 1);
         })
-        // Protect inline math \(...\) and $...$
         .replace(/\\\(([\s\S]+?)\\\)/g, (_, math) => {
           mathBlocks.push({ display: false, math });
           return placeholder(mathBlocks.length - 1);
@@ -354,10 +282,8 @@
           return placeholder(mathBlocks.length - 1);
         });
 
-      // Run marked on the protected text
       el.innerHTML = marked.parse(protected_text);
 
-      // Restore math blocks and render with KaTeX
       mathBlocks.forEach((block, i) => {
         el.innerHTML = el.innerHTML.replace(
           placeholder(i),
@@ -404,13 +330,6 @@
       document.getElementById("result").classList.add("visible");
     }
 
-    function showError(msg) {
-      document.getElementById("answerText").textContent = msg;
-      document.getElementById("reasoningText").style.display = "none";
-      document.getElementById("referencesSection").innerHTML = "";
-      document.getElementById("result").classList.add("visible");
-    }
-
     function hideResult() {
       document.getElementById("result").classList.remove("visible");
     }
@@ -432,7 +351,6 @@
       btnText.textContent = loading ? "Searching..." : "Search";
     }
 
-    // Allow Enter key (Ctrl+Enter) to submit
     document.getElementById("question").addEventListener("keydown", e => {
       if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) findAnswer();
     });
